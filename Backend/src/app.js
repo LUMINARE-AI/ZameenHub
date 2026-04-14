@@ -12,4 +12,7 @@ app.get("/", (req, res) => {
   res.send("ZameenHub API Running 🚀");
 });
 
+app.use("/api/auth", require("./routes/auth.routes"));
+
+app.use("/api/properties", require("./routes/property.routes"));
 module.exports = app;
