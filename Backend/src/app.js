@@ -1,9 +1,15 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
+
+import authRoutes from "./routes/auth.routes.js";
+import propertyRoutes from "./routes/property.routes.js";
+import requestRoutes from "./routes/request.routes.js";
+import otpRoutes from "./routes/otp.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -12,7 +18,11 @@ app.get("/", (req, res) => {
   res.send("ZameenHub API Running 🚀");
 });
 
-app.use("/api/auth", require("./routes/auth.routes"));
-
-app.use("/api/properties", require("./routes/property.routes"));
-module.exports = app;
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/properties", propertyRoutes);
+app.use("/api/otp", otpRoutes);
+app.use("/api/requests", requestRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/admin", adminRoutes);
+export default app;

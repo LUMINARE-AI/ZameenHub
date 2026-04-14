@@ -1,8 +1,8 @@
-const Property = require("../models/property.model");
+import Property from "../models/property.model.js";
 
 
 // ➕ ADD PROPERTY
-exports.addProperty = async (req, res) => {
+export const addProperty = async (req, res) => {
   try {
     const property = await Property.create({
       ...req.body,
@@ -17,7 +17,7 @@ exports.addProperty = async (req, res) => {
 
 
 // 📄 GET ALL PROPERTIES
-exports.getProperties = async (req, res) => {
+export const getProperties = async (req, res) => {
   try {
     const properties = await Property.find({ status: "approved" })
       .populate("owner", "name phone");
