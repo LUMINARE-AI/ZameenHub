@@ -1,23 +1,12 @@
 import mongoose from "mongoose";
+
 const propertySchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-    },
-
-    price: {
-      type: Number,
-      required: true,
-    },
-
-    location: {
-      type: String,
-      required: true,
-    },
-
+    title: String,
+    price: Number,
+    location: String,
     description: String,
-
+    contact: String,
     images: [String],
 
     video: String,
@@ -31,6 +20,11 @@ const propertySchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "approved"],
       default: "pending",
+    },
+
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true }

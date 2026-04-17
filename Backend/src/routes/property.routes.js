@@ -1,12 +1,18 @@
 import express from "express";
-import { addProperty, getProperties } from "../controllers/property.controller.js";
+import {
+  addProperty,
+  getProperties,
+  updateProperty,
+  deleteProperty,
+} from "../controllers/property.controller.js";
+
 import { protect } from "../middlewares/auth.middleware.js";
+
 const router = express.Router();
 
-// Add property (login required)
 router.post("/", protect, addProperty);
-
-// Get properties (public)
 router.get("/", getProperties);
+router.put("/:id", protect, updateProperty);
+router.delete("/:id", protect, deleteProperty);
 
 export default router;

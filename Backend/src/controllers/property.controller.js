@@ -6,7 +6,7 @@ export const addProperty = async (req, res) => {
   try {
     const property = await Property.create({
       ...req.body,
-      owner: req.user.id,
+      owner: req.user._id,
     });
 
     res.status(201).json(property);
@@ -16,13 +16,62 @@ export const addProperty = async (req, res) => {
 };
 
 
-// 📄 GET ALL PROPERTIES
+// 📄 GET ALL (ONLY APPROVED)
 export const getProperties = async (req, res) => {
   try {
-    const properties = await Property.find({ status: "approved" })
-      .populate("owner", "name phone");
+    const properties = await Property.find({ status: "approved" });
 
     res.json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// ✏️ UPDATE PROPERTY
+export const updateProperty = async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    if (property.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    const updated = await Property.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.json(updated);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// 🗑 DELETE PROPERTY
+export const deleteProperty = async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    if (property.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    await property.deleteOne();
+
+    res.json({ message: "Property deleted" });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
