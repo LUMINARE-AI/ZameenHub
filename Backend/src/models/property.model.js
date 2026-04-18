@@ -21,6 +21,9 @@ const propertySchema = new mongoose.Schema(
       enum: ["pending", "approved"],
       default: "pending",
     },
+    image: {
+  type: String,
+  },
   },
   { timestamps: true }
 );

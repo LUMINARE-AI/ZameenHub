@@ -1,18 +1,38 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="flex justify-between items-center px-8 py-4 bg-white shadow-sm">
+    <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+      
       <h1 className="text-2xl font-bold text-blue-600">ZameenHub</h1>
 
-      <div className="flex gap-8 text-gray-700 font-medium">
-        <Link to="/" className="hover:text-blue-600">Buy</Link>
-        <Link to="/add" className="hover:text-blue-600">Sell</Link>
-        <Link to="/dashboard" className="hover:text-blue-600">Dashboard</Link>
-        <Link to="/login" className="bg-blue-600 text-white px-4 py-2 rounded-lg">
-          Login
-        </Link>
+      {/* Desktop */}
+      <div className="hidden md:flex gap-6">
+        <a href="/" className="hover:text-blue-500">Buy</a>
+        <a href="/add" className="hover:text-blue-500">Sell</a>
+        <a href="/dashboard" className="hover:text-blue-500">Dashboard</a>
+        <a href="/admin" className="hover:text-blue-500">Admin</a>
       </div>
-    </div>
+
+      {/* Mobile Button */}
+      <button
+        className="md:hidden"
+        onClick={() => setOpen(!open)}
+      >
+        ☰
+      </button>
+
+      {/* Mobile Menu */}
+      {open && (
+        <div className="absolute top-16 left-0 w-full bg-white shadow-md flex flex-col items-center gap-4 py-4 md:hidden">
+          <a href="/">Buy</a>
+          <a href="/add">Sell</a>
+          <a href="/dashboard">Dashboard</a>
+          <a href="/admin">Admin</a>
+        </div>
+      )}
+    </nav>
   );
 }

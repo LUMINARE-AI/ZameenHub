@@ -2,42 +2,70 @@ import { useState } from "react";
 import API from "../services/api";
 
 export default function AddProperty() {
-  const [form, setForm] = useState({});
+  const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [location, setLocation] = useState("");
+  const [image, setImage] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const submit = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-    const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("price", price);
+      formData.append("location", location);
+      formData.append("image", image);
 
-    await API.post("/properties", form, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      await API.post("/properties", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    alert("Property Added!");
+      alert("Property Added!");
+    } catch (err) {
+      console.log(err);
+      alert("Error adding property");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow space-y-4">
+    <div className="max-w-xl mx-auto p-6 bg-white shadow rounded-xl">
 
-  <input className="w-full border p-2 rounded" placeholder="Title"
-    onChange={(e) => setForm({...form, title: e.target.value})} />
+      <h2 className="text-xl font-bold mb-4">Add Property</h2>
 
-  <input className="w-full border p-2 rounded" placeholder="Price"
-    onChange={(e) => setForm({...form, price: e.target.value})} />
+      <input
+        placeholder="Title"
+        className="border p-2 w-full mb-3"
+        onChange={(e) => setTitle(e.target.value)}
+      />
 
-  <input className="w-full border p-2 rounded" placeholder="Location"
-    onChange={(e) => setForm({...form, location: e.target.value})} />
+      <input
+        placeholder="Price"
+        className="border p-2 w-full mb-3"
+        onChange={(e) => setPrice(e.target.value)}
+      />
 
-  <input className="w-full border p-2 rounded" placeholder="Contact"
-    onChange={(e) => setForm({...form, contact: e.target.value})} />
+      <input
+        placeholder="Location"
+        className="border p-2 w-full mb-3"
+        onChange={(e) => setLocation(e.target.value)}
+      />
 
-  <textarea className="w-full border p-2 rounded" placeholder="Description"
-    onChange={(e) => setForm({...form, description: e.target.value})} />
+      <input
+        type="file"
+        className="mb-3"
+        onChange={(e) => setImage(e.target.files[0])}
+      />
 
-  <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
-    Add Property
-  </button>
+      <button
+        onClick={submit}
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Add Property
+      </button>
 
-</form>
+    </div>
   );
 }

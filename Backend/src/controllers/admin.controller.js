@@ -1,6 +1,13 @@
 import Property from "../models/property.model.js";
 
+const isAdmin = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Admin only" });
+  }
+  next();
+};
 
+export default isAdmin;
 // 📄 GET ALL PENDING PROPERTIES
 export const getPendingProperties = async (req, res) => {
   try {
@@ -27,6 +34,20 @@ export const approveProperty = async (req, res) => {
     );
 
     res.json(property);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// DELETE PROPERTY (ADMIN)
+export const deletePropertyAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await Property.findByIdAndDelete(id);
+
+    res.json({ message: "Property deleted by admin" });
 
   } catch (error) {
     res.status(500).json({ message: error.message });

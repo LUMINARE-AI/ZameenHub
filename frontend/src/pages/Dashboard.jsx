@@ -42,6 +42,32 @@ export default function Dashboard() {
     }
   };
 
+  const editProperty = async (property) => {
+  const newTitle = prompt("Enter new title", property.title);
+
+  if (!newTitle) return;
+
+  const token = localStorage.getItem("token");
+
+  try {
+    await API.put(
+      `/properties/${property._id}`,
+      { title: newTitle },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Updated!");
+    fetchMyProperties();
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">My Properties</h1>
@@ -52,7 +78,6 @@ export default function Dashboard() {
         <div className="grid md:grid-cols-2 gap-6">
           {properties.map((p) => (
             <div key={p._id} className="bg-white p-4 rounded-xl shadow">
-              
               <h2 className="text-lg font-semibold">{p.title}</h2>
               <p className="text-gray-600">{p.location}</p>
               <p className="text-blue-600 font-bold">₹ {p.price}</p>
@@ -68,6 +93,12 @@ export default function Dashboard() {
                 </button>
 
                 {/* Future: Edit button */}
+                <button
+                  onClick={() => editProperty(p)}
+                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+                >
+                  Edit
+                </button>
               </div>
             </div>
           ))}

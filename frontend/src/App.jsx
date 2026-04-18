@@ -4,7 +4,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import AddProperty from "./pages/AddProperty";
 import Dashboard from "./pages/Dashboard";
-
+import AdminPanel from "/pages/AdminPanel";
+import AddProperty from "./pages/AddProperty";
 export default function App() {
   return (
     <BrowserRouter>
@@ -15,6 +16,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/add" element={<AddProperty />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/add" element={<AddProperty />} />
       </Routes>
     </BrowserRouter>
   );
