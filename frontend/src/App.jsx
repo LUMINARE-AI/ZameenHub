@@ -5,7 +5,6 @@ import Login from "./pages/Login";
 import AddProperty from "./pages/AddProperty";
 import Dashboard from "./pages/Dashboard";
 import AdminPanel from "/pages/AdminPanel";
-import AddProperty from "./pages/AddProperty";
 export default function App() {
   return (
     <BrowserRouter>
