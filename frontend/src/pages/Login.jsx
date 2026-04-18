@@ -5,10 +5,18 @@ export default function Login() {
   const [phone, setPhone] = useState("");
 
   const login = async () => {
-    const res = await API.post("/auth/login", { phone });
+    try {
+      const res = await API.post("/auth/login", {
+        phone,
+        name: "User",
+      });
 
-    localStorage.setItem("token", res.data.token);
-    alert("Logged in!");
+      localStorage.setItem("token", res.data.token);
+      alert("Logged in!");
+    } catch (err) {
+      console.log(err);
+      alert("Login failed");
+    }
   };
 
   return (
