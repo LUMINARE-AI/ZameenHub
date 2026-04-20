@@ -11,7 +11,6 @@ import upload from "../middlewares/upload.middleware.js";
 
 const router = express.Router();
 
-router.post("/", protect, addProperty);
 router.post("/", protect, upload.single("image"), addProperty);
 router.get("/", getProperties);
 router.put("/:id", protect, updateProperty);

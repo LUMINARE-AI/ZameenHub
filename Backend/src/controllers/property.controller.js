@@ -57,10 +57,15 @@ export const updateProperty = async (req, res) => {
 
 
 // 🗑 DELETE PROPERTY
-export const deleteMyProperty = async (req, res) => {
+export const deleteProperty = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
 
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    // Owner check
     if (property.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not allowed" });
     }
