@@ -1,0 +1,136 @@
+import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import PropertyCard from "../components/PropertyCard";
+import PropertySkeleton from "../components/PropertySkeleton";
+import useProperties from "../hooks/useProperties";
+import { filterProperties, sortProperties } from "../utils/property";
+
+export default function Listings() {
+  const { properties, loading } = useProperties();
+  const [searchParams] = useSearchParams();
+  const [sortBy, setSortBy] = useState("newest");
+  const [filters, setFilters] = useState({
+    location: searchParams.get("location") || "",
+    type: searchParams.get("type") || "",
+    bedrooms: "",
+    maxPrice: Number(searchParams.get("maxPrice")) || 50000000,
+  });
+
+  const filteredProperties = useMemo(() => {
+    const filtered = filterProperties(properties, filters);
+    return sortProperties(filtered, sortBy);
+  }, [filters, properties, sortBy]);
+
+  function updateFilter(key, value) {
+    setFilters((current) => ({ ...current, [key]: value }));
+  }
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+      <aside className="h-fit rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)] lg:sticky lg:top-28">
+        <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Filters</p>
+        <h1 className="mt-3 text-2xl font-semibold text-slate-950">Refine your search</h1>
+
+        <div className="mt-6 space-y-5">
+          <div>
+            <label className="text-sm font-medium text-slate-600">Location</label>
+            <input
+              value={filters.location}
+              onChange={(event) => updateFilter("location", event.target.value)}
+              placeholder="City or locality"
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-600">Property type</label>
+            <select
+              value={filters.type}
+              onChange={(event) => updateFilter("type", event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            >
+              <option value="">All types</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Villa">Villa</option>
+              <option value="Townhouse">Townhouse</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-600">
+              Max price: ₹{Math.round(filters.maxPrice / 10000000)} Cr
+            </label>
+            <input
+              type="range"
+              min="5000000"
+              max="50000000"
+              step="500000"
+              value={filters.maxPrice}
+              onChange={(event) => updateFilter("maxPrice", Number(event.target.value))}
+              className="mt-3 w-full accent-blue-600"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-600">Bedrooms</label>
+            <select
+              value={filters.bedrooms}
+              onChange={(event) => updateFilter("bedrooms", event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            >
+              <option value="">Any</option>
+              <option value="1">1+</option>
+              <option value="2">2+</option>
+              <option value="3">3+</option>
+              <option value="4">4+</option>
+            </select>
+          </div>
+        </div>
+      </aside>
+
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4 rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)] sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Listings</p>
+            <h2 className="mt-2 text-3xl font-semibold text-slate-950">
+              Premium spaces tailored to your search
+            </h2>
+            <p className="mt-2 text-sm text-slate-500">
+              {loading ? "Loading homes..." : `${filteredProperties.length} curated properties available`}
+            </p>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-600">Sort by</label>
+            <select
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            >
+              <option value="newest">Newest</option>
+              <option value="price-asc">Price: Low to high</option>
+              <option value="price-desc">Price: High to low</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {loading
+            ? Array.from({ length: 6 }).map((_, index) => <PropertySkeleton key={index} />)
+            : filteredProperties.map((property, index) => (
+                <PropertyCard key={property._id} property={property} priority={index < 2} />
+              ))}
+        </div>
+
+        {!loading && filteredProperties.length === 0 ? (
+          <div className="rounded-[32px] border border-dashed border-slate-300 bg-white/70 px-6 py-12 text-center">
+            <p className="text-xl font-semibold text-slate-900">No homes match these filters yet.</p>
+            <p className="mt-2 text-sm text-slate-500">
+              Try widening the budget or changing the property type.
+            </p>
+          </div>
+        ) : null}
+      </section>
+    </div>
+  );
+}

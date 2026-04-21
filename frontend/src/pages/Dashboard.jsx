@@ -1,109 +1,102 @@
 import { useEffect, useState } from "react";
+import Button from "../components/ui/Button";
 import API from "../services/api";
+import { formatPrice } from "../utils/property";
 
 export default function Dashboard() {
   const [properties, setProperties] = useState([]);
 
-  const fetchMyProperties = async () => {
+  async function fetchMyProperties() {
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await API.get("/dashboard/my-properties", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setProperties(res.data);
-    } catch (err) {
-      console.log(err);
+      const response = await API.get("/dashboard/my-properties");
+      setProperties(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.log(error);
     }
-  };
+  }
 
   useEffect(() => {
-    fetchMyProperties();
+    let active = true;
+
+    async function loadProperties() {
+      try {
+        const response = await API.get("/dashboard/my-properties");
+
+        if (active) {
+          setProperties(Array.isArray(response.data) ? response.data : []);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    void loadProperties();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
-  // 🗑 DELETE FUNCTION
-  const deleteProperty = async (id) => {
+  async function deleteProperty(id) {
     try {
-      const token = localStorage.getItem("token");
-
-      await API.delete(`/properties/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      alert("Deleted!");
-      fetchMyProperties(); // refresh
-    } catch (err) {
-      console.log(err);
+      await API.delete(`/properties/${id}`);
+      await fetchMyProperties();
+    } catch (error) {
+      console.log(error);
     }
-  };
-
-  const editProperty = async (property) => {
-  const newTitle = prompt("Enter new title", property.title);
-
-  if (!newTitle) return;
-
-  const token = localStorage.getItem("token");
-
-  try {
-    await API.put(
-      `/properties/${property._id}`,
-      { title: newTitle },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    alert("Updated!");
-    fetchMyProperties();
-
-  } catch (err) {
-    console.log(err);
   }
-};
+
+  async function editProperty(property) {
+    const newTitle = prompt("Enter new title", property.title);
+
+    if (!newTitle) {
+      return;
+    }
+
+    try {
+      await API.put(`/properties/${property._id}`, { title: newTitle });
+      await fetchMyProperties();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">My Properties</h1>
+    <div className="space-y-6">
+      <section className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)]">
+        <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Dashboard</p>
+        <h1 className="mt-3 text-3xl font-semibold text-slate-950">My listed properties</h1>
+      </section>
 
-      {properties.length === 0 ? (
-        <p>No properties added yet</p>
-      ) : (
-        <div className="grid md:grid-cols-2 gap-6">
-          {properties.map((p) => (
-            <div key={p._id} className="bg-white p-4 rounded-xl shadow">
-              <h2 className="text-lg font-semibold">{p.title}</h2>
-              <p className="text-gray-600">{p.location}</p>
-              <p className="text-blue-600 font-bold">₹ {p.price}</p>
+      <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {properties.length === 0 ? (
+          <div className="rounded-[32px] border border-dashed border-slate-300 bg-white/80 px-6 py-12 text-center md:col-span-2 xl:col-span-3">
+            <p className="text-xl font-semibold text-slate-900">No properties added yet</p>
+            <p className="mt-2 text-sm text-slate-500">Your listings will appear here once published.</p>
+          </div>
+        ) : (
+          properties.map((property) => (
+            <div
+              key={property._id}
+              className="rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.26)]"
+            >
+              <h2 className="text-xl font-semibold text-slate-950">{property.title}</h2>
+              <p className="mt-2 text-sm text-slate-500">{property.location}</p>
+              <p className="mt-4 text-2xl font-semibold text-slate-950">{formatPrice(property.price)}</p>
+              <p className="mt-4 text-sm leading-6 text-slate-600">{property.description}</p>
 
-              <p className="text-sm mt-2">{p.description}</p>
-
-              <div className="flex gap-4 mt-4">
-                <button
-                  onClick={() => deleteProperty(p._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
-                >
-                  Delete
-                </button>
-
-                {/* Future: Edit button */}
-                <button
-                  onClick={() => editProperty(p)}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded"
-                >
+              <div className="mt-6 flex gap-3">
+                <Button variant="ghost" onClick={() => editProperty(property)}>
                   Edit
-                </button>
+                </Button>
+                <Button variant="dark" onClick={() => deleteProperty(property._id)}>
+                  Delete
+                </Button>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </section>
     </div>
   );
 }

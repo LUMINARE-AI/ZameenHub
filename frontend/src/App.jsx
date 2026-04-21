@@ -1,23 +1,37 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
+import AdminPanel from "./pages/AdminPanel";
 import AddProperty from "./pages/AddProperty";
 import Dashboard from "./pages/Dashboard";
-import AdminPanel from "/pages/AdminPanel";
-export default function App() {
-  return (
-    <BrowserRouter>
-      <Navbar />
+import Home from "./pages/Home";
+import Listings from "./pages/Listings";
+import Login from "./pages/Login";
+import PropertyDetail from "./pages/PropertyDetail";
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/add" element={<AddProperty />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/add" element={<AddProperty />} />
-      </Routes>
-    </BrowserRouter>
+function AppLayout() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-900">
+      <div className="relative isolate min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_28%),linear-gradient(180deg,_#f8fbff_0%,_#eef4ff_32%,_#f8fafc_100%)]">
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(circle,_rgba(14,165,233,0.14),_transparent_55%)]" />
+        <BrowserRouter>
+          <Navbar />
+          <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[1440px] flex-col px-4 pb-10 pt-6 sm:px-6 lg:px-8">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/listings" element={<Listings />} />
+              <Route path="/property/:propertyId" element={<PropertyDetail />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/add" element={<AddProperty />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin" element={<AdminPanel />} />
+            </Routes>
+          </main>
+          <Footer />
+        </BrowserRouter>
+      </div>
+    </div>
   );
 }
+
+export default AppLayout;

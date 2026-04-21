@@ -5,11 +5,16 @@ import Property from "../models/property.model.js";
 export const addProperty = async (req, res) => {
   try {
     const image = req.file?.path;
+    const ownerId = req.user?._id || req.user?.id;
+
+    if (!ownerId) {
+      return res.status(401).json({ message: "User not authorized" });
+    }
 
     const property = await Property.create({
       ...req.body,
       image,
-      owner: req.user._id,
+      owner: ownerId,
       status: "pending",
     });
 
@@ -36,6 +41,10 @@ export const getProperties = async (req, res) => {
 export const updateProperty = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
 
     // Owner check
     if (property.owner.toString() !== req.user._id.toString()) {

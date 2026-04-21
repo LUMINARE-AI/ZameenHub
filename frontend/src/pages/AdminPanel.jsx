@@ -1,92 +1,94 @@
 import { useEffect, useState } from "react";
-import API from "./services/api";
+import Button from "../components/ui/Button";
+import API from "../services/api";
+import { formatPrice } from "../utils/property";
 
 export default function AdminPanel() {
   const [properties, setProperties] = useState([]);
 
-  const fetchPending = async () => {
+  async function fetchPending() {
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await API.get("/admin/properties/pending", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setProperties(res.data);
-    } catch (err) {
-      console.log(err);
+      const response = await API.get("/admin/properties/pending");
+      setProperties(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.log(error);
     }
-  };
+  }
 
   useEffect(() => {
-    fetchPending();
+    let active = true;
+
+    async function loadPending() {
+      try {
+        const response = await API.get("/admin/properties/pending");
+
+        if (active) {
+          setProperties(Array.isArray(response.data) ? response.data : []);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    void loadPending();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
-  // ✅ APPROVE
-  const approve = async (id) => {
-    const token = localStorage.getItem("token");
+  async function approve(id) {
+    try {
+      await API.put(`/admin/properties/${id}/approve`, {});
+      await fetchPending();
+    } catch (error) {
+      console.log(error);
+      alert("Approval failed");
+    }
+  }
 
-    await API.put(`/admin/properties/${id}/approve`, {}, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    alert("Approved!");
-    fetchPending();
-  };
-
-  // 🗑 DELETE
-  const deleteProp = async (id) => {
-    const token = localStorage.getItem("token");
-
-    await API.delete(`/admin/properties/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    alert("Deleted!");
-    fetchPending();
-  };
+  async function deleteProperty(id) {
+    try {
+      await API.delete(`/admin/properties/${id}`);
+      await fetchPending();
+    } catch (error) {
+      console.log(error);
+      alert("Delete failed");
+    }
+  }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Admin Panel</h1>
+    <div className="space-y-6">
+      <section className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)]">
+        <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Admin panel</p>
+        <h1 className="mt-3 text-3xl font-semibold text-slate-950">Pending property approvals</h1>
+      </section>
 
-      {properties.length === 0 ? (
-        <p>No pending properties</p>
-      ) : (
-        <div className="grid md:grid-cols-2 gap-6">
-          {properties.map((p) => (
-            <div key={p._id} className="bg-white p-4 rounded-xl shadow">
-
-              <h2 className="font-semibold">{p.title}</h2>
-              <p>{p.location}</p>
-              <p className="text-blue-600">₹ {p.price}</p>
-
-              <div className="flex gap-3 mt-4">
-                <button
-                  onClick={() => approve(p._id)}
-                  className="bg-green-500 text-white px-3 py-1 rounded"
-                >
-                  Approve
-                </button>
-
-                <button
-                  onClick={() => deleteProp(p._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
-                >
+      <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {properties.length === 0 ? (
+          <div className="rounded-[32px] border border-dashed border-slate-300 bg-white/80 px-6 py-12 text-center md:col-span-2 xl:col-span-3">
+            <p className="text-xl font-semibold text-slate-900">No pending properties</p>
+            <p className="mt-2 text-sm text-slate-500">New submissions will show up here for review.</p>
+          </div>
+        ) : (
+          properties.map((property) => (
+            <div
+              key={property._id}
+              className="rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.26)]"
+            >
+              <h2 className="text-xl font-semibold text-slate-950">{property.title}</h2>
+              <p className="mt-2 text-sm text-slate-500">{property.location}</p>
+              <p className="mt-4 text-2xl font-semibold text-slate-950">{formatPrice(property.price)}</p>
+              <div className="mt-6 flex gap-3">
+                <Button onClick={() => approve(property._id)}>Approve</Button>
+                <Button variant="dark" onClick={() => deleteProperty(property._id)}>
                   Delete
-                </button>
+                </Button>
               </div>
-
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </section>
     </div>
   );
 }
