@@ -8,6 +8,10 @@ import {
 } from "../utils/auth";
 import Button from "./ui/Button";
 
+const user = JSON.parse(localStorage.getItem("user"));
+console.log(user.role); // admin ✅
+{user?.role === "admin" && <a href="/admin">Admin</a>}
+
 export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);

@@ -28,6 +28,9 @@ export default function AdminPanel() {
   useEffect(() => {
     let active = true;
 
+    API.get("/admin/properties/pending")
+    .then(res => console.log(res.data))
+
     async function loadPending() {
       try {
         setLoading(true);
