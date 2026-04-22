@@ -3,54 +3,36 @@ import Property from "../models/property.model.js";
 // ➕ ADD PROPERTY
 export const addProperty = async (req, res) => {
   try {
-    console.log("🔥 ADD PROPERTY REQUEST");
+    console.log("🔥 ADD PROPERTY");
 
-    // 🔥 SAFE USER FETCH
-    if (!req.user || !req.user._id) {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+    console.log("USER:", req.user);
+
+    if (!req.user) {
       return res.status(401).json({ message: "User not authorized" });
     }
 
-    const ownerId = req.user._id;
+    const { title, price, location, description } = req.body;
 
-    // 🔥 CLEAN DATA
-    const title = String(req.body.title || "").trim();
-    const location = String(req.body.location || "").trim();
-    const description = String(req.body.description || "").trim();
-    const price = Number(req.body.price);
-
-    const image = req.file?.path || "";
-
-    console.log("Parsed:", { title, location, description, price, ownerId, image });
-
-    // 🔥 VALIDATION
-    if (!title || !location || !description) {
-      return res.status(400).json({
-        message: "Title, location, and description are required",
-      });
+    if (!title || !price || !location) {
+      return res.status(400).json({ message: "Missing fields" });
     }
 
-    if (!Number.isFinite(price) || price <= 0) {
-      return res.status(400).json({
-        message: "Enter a valid property price",
-      });
-    }
-
-    // 🔥 CREATE PROPERTY
     const property = await Property.create({
       title,
-      price,
+      price: Number(price),
       location,
       description,
-      image,
-      owner: ownerId,
+      image: req.file?.path || "",
+      owner: req.user._id,
       status: "pending",
     });
 
-    console.log("✅ Property created:", property);
-
     res.status(201).json(property);
+
   } catch (error) {
-    console.log("❌ ADD PROPERTY ERROR:", error);
+    console.log("🔥 REAL ERROR:", error); // 👈 ye important hai
     res.status(500).json({ message: error.message });
   }
 };
