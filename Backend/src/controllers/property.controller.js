@@ -29,6 +29,7 @@ export const addProperty = async (req, res) => {
       location,
       description,
       image,
+      contact: req.user.phone || "",
       owner: req.user._id,
       status: "pending",
     });

@@ -1,15 +1,32 @@
+import { Link } from "react-router-dom";
+
 const footerGroups = [
   {
     title: "Explore",
-    links: ["Buy Homes", "Rent Homes", "Sell Property", "Luxury Collection"],
+    links: [
+      { label: "Buy Homes", to: "/listings" },
+      { label: "Rent Homes", to: "/listings" },
+      { label: "Sell Property", to: "/add" },
+      { label: "Luxury Collection", to: "/listings?type=Luxury" },
+    ],
   },
   {
     title: "Company",
-    links: ["About Us", "Careers", "Blog", "Press"],
+    links: [
+      { label: "About Us", to: "/" },
+      { label: "Careers", to: "/" },
+      { label: "Blog", to: "/" },
+      { label: "Press", to: "/" },
+    ],
   },
   {
     title: "Support",
-    links: ["Contact", "Terms", "Privacy", "Help Center"],
+    links: [
+      { label: "Contact", to: "/" },
+      { label: "Terms", to: "/" },
+      { label: "Privacy", to: "/" },
+      { label: "Help Center", to: "/" },
+    ],
   },
 ];
 
@@ -40,9 +57,13 @@ export default function Footer() {
             </p>
             <div className="mt-4 space-y-3 text-sm text-slate-300">
               {group.links.map((link) => (
-                <p key={link} className="transition hover:text-white">
-                  {link}
-                </p>
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className="block transition hover:text-white"
+                >
+                  {link.label}
+                </Link>
               ))}
             </div>
           </div>

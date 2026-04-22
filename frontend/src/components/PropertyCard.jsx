@@ -49,7 +49,23 @@ export default function PropertyCard({ property, priority = false }) {
             </Link>
             <p className="mt-1 text-sm text-slate-500">{property.location}</p>
           </div>
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${
+              property.status === "approved"
+                ? "bg-emerald-50 text-emerald-700"
+                : "bg-amber-50 text-amber-700"
+            }`}
+          >
+            {property.status === "approved" ? "Approved" : "Pending"}
+          </span>
         </div>
+
+        {property.owner?.name || property.owner?.phone ? (
+          <p className="text-sm text-slate-600">
+            Seller: {property.owner?.name || "Private owner"}
+            {property.owner?.phone ? ` • ${property.owner.phone}` : ""}
+          </p>
+        ) : null}
 
         <p className="line-clamp-2 text-sm leading-6 text-slate-600">{property.description}</p>
 

@@ -2,11 +2,12 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import PropertyCard from "../components/PropertyCard";
 import PropertySkeleton from "../components/PropertySkeleton";
+import StatusBanner from "../components/StatusBanner";
 import useProperties from "../hooks/useProperties";
 import { filterProperties, sortProperties } from "../utils/property";
 
 export default function Listings() {
-  const { properties, loading } = useProperties();
+  const { properties, loading, error } = useProperties();
   const [searchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState("newest");
   const [filters, setFilters] = useState({
@@ -113,6 +114,8 @@ export default function Listings() {
             </select>
           </div>
         </div>
+
+        {error ? <StatusBanner tone="error" message={error} /> : null}
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {loading

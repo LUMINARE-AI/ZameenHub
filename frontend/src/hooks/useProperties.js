@@ -5,12 +5,14 @@ import { normalizeProperty } from "../utils/property";
 export default function useProperties() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
 
     async function loadProperties() {
       setLoading(true);
+      setError("");
 
       try {
         const response = await API.get("/properties");
@@ -20,9 +22,10 @@ export default function useProperties() {
         if (active) {
           setProperties(normalizedRemote);
         }
-      } catch {
+      } catch (err) {
         if (active) {
           setProperties([]);
+          setError(err.response?.data?.message || "Unable to load property listings.");
         }
       } finally {
         if (active) {
@@ -43,5 +46,5 @@ export default function useProperties() {
     [properties]
   );
 
-  return { properties, featuredProperties, loading };
+  return { properties, featuredProperties, loading, error };
 }

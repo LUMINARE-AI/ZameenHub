@@ -48,7 +48,8 @@ export function normalizeProperty(property, index = 0) {
       property.images && property.images.length > 0
         ? property.images
         : [primaryImage, primaryImage, primaryImage],
-    contact: property.contact || "+91 90000 00000",
+    contact: property.contact || property.owner?.phone || "",
+    owner: property.owner || null,
     status: property.status || "approved",
     featured: Boolean(property.featured),
     createdAt: property.createdAt || new Date().toISOString(),
