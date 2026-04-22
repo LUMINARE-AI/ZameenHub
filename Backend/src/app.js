@@ -30,6 +30,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 app.use((error, req, res, next) => {
+  console.error("GLOBAL ERROR HANDLER:", error);
+
   if (error instanceof multer.MulterError) {
     return res.status(400).json({ message: error.message });
   }

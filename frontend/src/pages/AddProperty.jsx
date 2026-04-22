@@ -42,12 +42,7 @@ export default function AddProperty() {
         formData.append("image", image);
       }
 
-      const res = await API.post("/properties", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // Don't set Content-Type for FormData - let browser set it with boundary
-        },
-      });
+      const res = await API.post("/properties", formData);
 
       console.log("SUCCESS:", res.data);
 
@@ -90,6 +85,7 @@ export default function AddProperty() {
 
       <input
         type="file"
+        accept="image/*"
         onChange={(e) => setImage(e.target.files[0])}
       /><br /><br />
 

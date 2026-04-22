@@ -6,6 +6,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "zameenhub",
+    resource_type: "image",
     allowed_formats: ["jpg", "png", "jpeg"],
   },
 });

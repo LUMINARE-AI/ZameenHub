@@ -13,7 +13,11 @@ export const addProperty = async (req, res) => {
       return res.status(401).json({ message: "User not authorized" });
     }
 
-    const { title, price, location, description } = req.body;
+    const title = String(req.body.title || "").trim();
+    const price = Number(req.body.price);
+    const location = String(req.body.location || "").trim();
+    const description = String(req.body.description || "").trim();
+    const image = req.file?.path || req.file?.secure_url || req.file?.url || "";
 
     if (!title || !price || !location) {
       return res.status(400).json({ message: "Missing fields" });
@@ -21,10 +25,10 @@ export const addProperty = async (req, res) => {
 
     const property = await Property.create({
       title,
-      price: Number(price),
+      price,
       location,
       description,
-      image: req.file?.path || "",
+      image,
       owner: req.user._id,
       status: "pending",
     });
