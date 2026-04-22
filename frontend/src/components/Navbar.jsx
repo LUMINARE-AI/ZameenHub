@@ -1,16 +1,45 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import {
+  clearSession,
+  getStoredUser,
+  isLoggedIn,
+  subscribeToSessionChanges,
+} from "../utils/auth";
 import Button from "./ui/Button";
 
-const navItems = [
-  { label: "Buy", to: "/" },
-  { label: "Rent", to: "/listings?mode=rent" },
-  { label: "Sell", to: "/add" },
-  { label: "Login", to: "/login" },
-];
-
 export default function Navbar() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [session, setSession] = useState({
+    loggedIn: isLoggedIn(),
+    user: getStoredUser(),
+  });
+
+  useEffect(
+    () =>
+      subscribeToSessionChanges(() => {
+        setSession({
+          loggedIn: isLoggedIn(),
+          user: getStoredUser(),
+        });
+      }),
+    []
+  );
+
+  const navItems = [
+    { label: "Buy", to: "/" },
+    { label: "Sell", to: "/add" },
+    ...(session.loggedIn ? [{ label: "Dashboard", to: "/dashboard" }] : []),
+    ...(session.user?.role === "admin" ? [{ label: "Admin", to: "/admin" }] : []),
+    ...(!session.loggedIn ? [{ label: "Login", to: "/login" }] : []),
+  ];
+
+  function handleLogout() {
+    clearSession();
+    setOpen(false);
+    navigate("/login");
+  }
 
   return (
     <header className="sticky top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8">
@@ -41,7 +70,17 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden md:flex">
+        <div className="hidden items-center gap-3 md:flex">
+          {session.loggedIn ? (
+            <>
+              <span className="text-sm text-slate-500">
+                {session.user?.name || "Signed in"}
+              </span>
+              <Button variant="ghost" className="px-4 py-2.5" onClick={handleLogout}>
+                Logout
+              </Button>
+            </>
+          ) : null}
           <Link to="/listings">
             <Button variant="primary" className="px-4 py-2.5">
               Explore Listings
@@ -55,7 +94,7 @@ export default function Navbar() {
           onClick={() => setOpen((current) => !current)}
           aria-label="Toggle menu"
         >
-          <span className="text-lg">{open ? "×" : "☰"}</span>
+          <span className="text-lg">{open ? "x" : "☰"}</span>
         </button>
       </div>
 
@@ -75,6 +114,11 @@ export default function Navbar() {
             <Link to="/listings" onClick={() => setOpen(false)}>
               <Button className="w-full">Explore Listings</Button>
             </Link>
+            {session.loggedIn ? (
+              <Button variant="ghost" className="w-full" onClick={handleLogout}>
+                Logout
+              </Button>
+            ) : null}
           </div>
         </div>
       ) : null}

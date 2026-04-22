@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/AdminPanel";
 import AddProperty from "./pages/AddProperty";
 import Dashboard from "./pages/Dashboard";
@@ -22,9 +23,30 @@ function AppLayout() {
               <Route path="/listings" element={<Listings />} />
               <Route path="/property/:propertyId" element={<PropertyDetail />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/add" element={<AddProperty />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/admin" element={<AdminPanel />} />
+              <Route
+                path="/add"
+                element={
+                  <ProtectedRoute>
+                    <AddProperty />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </main>
           <Footer />

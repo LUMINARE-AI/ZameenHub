@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { mockProperties } from "../data/mockProperties";
 import API from "../services/api";
 import { normalizeProperty } from "../utils/property";
 
@@ -19,19 +18,11 @@ export default function useProperties() {
         const normalizedRemote = remoteProperties.map(normalizeProperty);
 
         if (active) {
-          const merged = [...normalizedRemote];
-
-          mockProperties.forEach((property, index) => {
-            if (!merged.some((item) => item._id === property._id)) {
-              merged.push(normalizeProperty(property, index));
-            }
-          });
-
-          setProperties(merged);
+          setProperties(normalizedRemote);
         }
       } catch {
         if (active) {
-          setProperties(mockProperties.map(normalizeProperty));
+          setProperties([]);
         }
       } finally {
         if (active) {
