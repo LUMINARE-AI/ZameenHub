@@ -3,25 +3,27 @@ import generateToken from "../utils/generateToken.js";
 
 export const loginUser = async (req, res) => {
   try {
-    const normalizedPhone = String(req.body.phone || "").trim();
-    const normalizedName = String(req.body.name || "").trim();
+    const { phone, name } = req.body;
 
-    if (!normalizedPhone) {
+    if (!phone) {
       return res.status(400).json({ message: "Phone number is required" });
     }
 
-    let user = await User.findOne({ phone: normalizedPhone });
+    let user = await User.findOne({ phone });
 
     if (!user) {
-      user = await User.create({
-        phone: normalizedPhone,
-        name: normalizedName || "New User",
-      });
+      user = await User.create({ phone, name });
     }
 
     const token = generateToken(user._id);
-    res.json({ token });
+
+    res.json({
+      token,
+      user,
+    });
+
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };

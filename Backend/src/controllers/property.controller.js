@@ -46,8 +46,9 @@ export const getProperties = async (req, res) => {
     const properties = await Property.find({ status: "approved" });
     res.json(properties);
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  console.log("ADD PROPERTY ERROR:", error); // 🔥 MUST
+  res.status(500).json({ message: error.message });
+}
 };
 
 export const updateProperty = async (req, res) => {
