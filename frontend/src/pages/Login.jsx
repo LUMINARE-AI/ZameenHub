@@ -1,9 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import StatusBanner from "../components/StatusBanner";
-import Button from "../components/ui/Button";
-import Input from "../components/ui/Input";
-import API from "../services/api";
+import { saveSession } from "../utils/auth";
 
 export default function Login() {
   const location = useLocation();
@@ -38,9 +35,14 @@ export default function Login() {
 
       console.log("LOGIN RESPONSE:", response.data);
 
-      // 🔥 IMPORTANT FIX
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      // 🔥 IMPORTANT FIX - Use saveSession to trigger session change events
+      saveSession({
+        token: response.data.token,
+        user: response.data.user,
+      });
+
+      console.log("STORED USER:", response.data.user);
+      console.log("STORED TOKEN:", response.data.token);
 
       setStatus({
         tone: "success",
