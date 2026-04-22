@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8000/api", // 🔥 CHANGE TO LOCALHOST FOR DEVELOPMENT
+  baseURL: "https://backend-3rsf.onrender.com", // 🔥 CHANGE TO LOCALHOST FOR DEVELOPMENT
 });
 
 // 🔥 IMPORTANT INTERCEPTOR
