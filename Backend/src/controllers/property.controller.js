@@ -36,8 +36,9 @@ export const addProperty = async (req, res) => {
 
     res.status(201).json(property);
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  console.log("ERROR:", error); // 👈 ADD THIS
+  res.status(500).json({ message: error.message });
+}
 };
 
 export const getProperties = async (req, res) => {

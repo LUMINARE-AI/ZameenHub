@@ -19,10 +19,8 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    res.json({
-      user,
-      token: generateToken(user._id),
-    });
+    const token = generateToken(user._id);
+    res.json({ token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
