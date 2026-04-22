@@ -44,7 +44,8 @@ export default function AddProperty() {
 
       const res = await API.post("/properties", formData, {
         headers: {
-          Authorization: `Bearer ${token}`, // 🔥 MOST IMPORTANT
+          Authorization: `Bearer ${token}`,
+          // Don't set Content-Type for FormData - let browser set it with boundary
         },
       });
 

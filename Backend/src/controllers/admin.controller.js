@@ -14,17 +14,20 @@ export const getPendingProperties = async (req, res) => {
 
 export const approveProperty = async (req, res) => {
   try {
-    const property = await Property.findByIdAndUpdate(
-      req.params.id,
-      { status: "approved" },
-      { new: true }
-    );
+    const property = await Property.findById(req.params.id);
 
     if (!property) {
       return res.status(404).json({ message: "Property not found" });
     }
 
-    res.json(property);
+    property.status = "approved";
+    await property.save();
+
+    res.json({
+      message: "Property approved successfully",
+      property,
+    });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

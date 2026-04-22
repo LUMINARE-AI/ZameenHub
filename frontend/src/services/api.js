@@ -1,18 +1,18 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://zameenhub.onrender.com/api",
+  baseURL: "http://localhost:8000/api", // 🔥 CHANGE TO LOCALHOST FOR DEVELOPMENT
 });
 
-// 🔥 ADD THIS INTERCEPTOR
-API.interceptors.request.use((config) => {
+// 🔥 IMPORTANT INTERCEPTOR
+API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
 
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    req.headers.Authorization = `Bearer ${token}`;
   }
 
-  return config;
+  return req;
 });
 
 export default API;
