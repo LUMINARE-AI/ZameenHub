@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Listings from "./pages/Listings";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import PropertyDetail from "./pages/PropertyDetail";
 
 function AppLayout() {
@@ -23,6 +24,7 @@ function AppLayout() {
               <Route path="/listings" element={<Listings />} />
               <Route path="/property/:propertyId" element={<PropertyDetail />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
               <Route
                 path="/add"
                 element={

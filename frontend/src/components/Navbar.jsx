@@ -32,7 +32,6 @@ export default function Navbar() {
     { label: "Sell", to: "/add" },
     ...(session.loggedIn ? [{ label: "Dashboard", to: "/dashboard" }] : []),
     ...(session.user?.role === "admin" ? [{ label: "Admin", to: "/admin" }] : []),
-    ...(!session.loggedIn ? [{ label: "Login", to: "/login" }] : []),
   ];
 
   function handleLogout() {
@@ -80,7 +79,20 @@ export default function Navbar() {
                 Logout
               </Button>
             </>
-          ) : null}
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" className="px-4 py-2.5">
+                  Login
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button variant="primary" className="px-4 py-2.5">
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
           <Link to="/listings">
             <Button variant="primary" className="px-4 py-2.5">
               Explore Listings
@@ -111,14 +123,25 @@ export default function Navbar() {
                 {item.label}
               </NavLink>
             ))}
-            <Link to="/listings" onClick={() => setOpen(false)}>
-              <Button className="w-full">Explore Listings</Button>
-            </Link>
             {session.loggedIn ? (
               <Button variant="ghost" className="w-full" onClick={handleLogout}>
                 Logout
               </Button>
-            ) : null}
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setOpen(false)} className="w-full">
+                  <Button variant="ghost" className="w-full">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/signup" onClick={() => setOpen(false)} className="w-full">
+                  <Button className="w-full">Sign Up</Button>
+                </Link>
+              </>
+            )}
+            <Link to="/listings" onClick={() => setOpen(false)} className="w-full">
+              <Button className="w-full">Explore Listings</Button>
+            </Link>
           </div>
         </div>
       ) : null}
