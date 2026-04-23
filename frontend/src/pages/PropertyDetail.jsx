@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
+import Toast from "../components/ui/Toast";
 import useProperties from "../hooks/useProperties";
 import { formatArea, formatPrice } from "../utils/property";
+import { getStoredUser } from "../utils/auth";
+import API from "../services/api";
 
 function InfoPill({ label, value }) {
   return (
@@ -14,10 +17,14 @@ function InfoPill({ label, value }) {
 }
 
 export default function PropertyDetail() {
+  const navigate = useNavigate();
   const { propertyId } = useParams();
   const { properties, loading } = useProperties();
   const [activeImage, setActiveImage] = useState(0);
   const [showSeller, setShowSeller] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [toast, setToast] = useState({ message: "", tone: "info" });
+  const user = getStoredUser();
 
   const property = useMemo(
     () => properties.find((item) => item._id === propertyId),
@@ -52,6 +59,30 @@ export default function PropertyDetail() {
         </Link>
       </div>
     );
+  }
+
+  const isAdmin = user?.role === "admin";
+  const isOwner = property.owner?._id === user?._id;
+
+  async function handleDeleteProperty() {
+    if (!window.confirm("Are you sure you want to delete this property?")) {
+      return;
+    }
+
+    try {
+      setDeleting(true);
+      await API.delete(`/properties/${property._id}`);
+      setToast({ message: "Property deleted successfully.", tone: "success" });
+      setTimeout(() => {
+        navigate("/listings");
+      }, 1500);
+    } catch (error) {
+      const message =
+        error.response?.data?.message || "Unable to delete this property.";
+      setToast({ message, tone: "error" });
+    } finally {
+      setDeleting(false);
+    }
   }
 
   return (
@@ -134,6 +165,16 @@ export default function PropertyDetail() {
           <Button className="w-full" onClick={() => setShowSeller(true)}>
             Contact Seller
           </Button>
+          {isAdmin && (
+            <Button
+              variant="ghost"
+              className="w-full border border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+              onClick={handleDeleteProperty}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "🗑 Delete Property"}
+            </Button>
+          )}
         </div>
 
         {showSeller ? (
@@ -158,6 +199,7 @@ export default function PropertyDetail() {
           </div>
         ) : null}
       </aside>
+      <Toast message={toast.message} tone={toast.tone} />
     </div>
   );
 }

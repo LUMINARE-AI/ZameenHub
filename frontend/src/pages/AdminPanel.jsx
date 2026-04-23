@@ -142,9 +142,17 @@ export default function AdminPanel() {
               </div>
               <div className="mt-6 flex gap-3">
                 <Button onClick={() => approve(property._id)}>Approve</Button>
-                <Button variant="dark" onClick={() => deleteProperty(property._id)}>
-                  Delete
-                </Button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm("Delete this property?")) {
+                      deleteProperty(property._id);
+                    }
+                  }}
+                  className="rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-100 hover:text-rose-700"
+                >
+                  🗑 Delete
+                </button>
               </div>
             </div>
           ))

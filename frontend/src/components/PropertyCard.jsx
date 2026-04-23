@@ -85,9 +85,9 @@ export default function PropertyCard({
               type="button"
               onClick={() => onDelete?.(property._id)}
               disabled={deleting}
-              className="rounded-full bg-slate-950 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {deleting ? "Deleting..." : "Delete"}
+              {deleting ? "Deleting..." : "🗑 Delete"}
             </button>
           ) : null}
         </div>
