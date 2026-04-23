@@ -34,7 +34,7 @@ export default function InfoPage({ type }) {
       </p>
       <h1 className="mt-3 text-4xl font-extrabold text-slate-950">{content.title}</h1>
       <p className="mt-5 text-base leading-8 text-slate-600">{content.body}</p>
-      <Link to="/listings?category=Plots" className="mt-8 inline-flex">
+      <Link to="/buy-plots" className="mt-8 inline-flex">
         <Button>Explore Plots</Button>
       </Link>
     </section>

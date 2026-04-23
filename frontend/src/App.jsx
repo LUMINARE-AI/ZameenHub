@@ -22,6 +22,7 @@ function AppLayout() {
           <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[1440px] flex-col px-4 pb-10 pt-6 sm:px-6 lg:px-8">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/buy-plots" element={<Listings defaultCategory="plots" />} />
               <Route path="/listings" element={<Listings />} />
               <Route path="/property/:propertyId" element={<PropertyDetail />} />
               <Route path="/login" element={<Login />} />

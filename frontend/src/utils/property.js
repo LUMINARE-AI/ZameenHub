@@ -78,7 +78,11 @@ export function filterProperties(properties, filters) {
       property.location.toLowerCase().includes(filters.location.toLowerCase()) ||
       property.city.toLowerCase().includes(filters.location.toLowerCase());
     const matchesType = !filters.type || property.type === filters.type;
-    const matchesCategory = !filters.category || property.category === filters.category;
+    const matchesCategory =
+      !filters.category ||
+      (Array.isArray(filters.category)
+        ? filters.category.includes(property.category)
+        : property.category === filters.category);
     const matchesBedrooms = !filters.bedrooms || property.bedrooms >= Number(filters.bedrooms);
     const matchesPrice = property.price <= filters.maxPrice;
 

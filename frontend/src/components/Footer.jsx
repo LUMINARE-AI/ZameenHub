@@ -4,7 +4,7 @@ const footerGroups = [
   {
     title: "Buy",
     links: [
-      { label: "Plots", to: "/listings?category=Plots" },
+      { label: "Plots", to: "/buy-plots" },
       { label: "Commercial Land", to: "/listings?category=Commercial+Land" },
       { label: "Agricultural Land", to: "/listings?category=Agricultural+Land" },
       { label: "Shops", to: "/listings?category=Shops" },

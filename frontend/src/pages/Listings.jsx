@@ -14,6 +14,8 @@ import {
   sortProperties,
 } from "../utils/property";
 
+const LAND_FILTER_CATEGORIES = ["Plots", "Commercial Land", "Agricultural Land"];
+
 function canDeleteProperty(user, property) {
   if (!user) {
     return false;
@@ -22,7 +24,7 @@ function canDeleteProperty(user, property) {
   return user.role === "admin" || property.owner?._id === user._id;
 }
 
-export default function Listings() {
+export default function Listings({ defaultCategory = "" }) {
   const { properties, loading, error, refetch } = useProperties();
   const [searchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState("newest");
@@ -32,11 +34,15 @@ export default function Listings() {
   const user = getStoredUser();
   const [filters, setFilters] = useState({
     location: searchParams.get("location") || "",
-    category: searchParams.get("category") || "",
+    category:
+      searchParams.get("category") ||
+      (defaultCategory === "plots" ? LAND_FILTER_CATEGORIES : ""),
     type: "",
     bedrooms: "",
     maxPrice: Number(searchParams.get("maxPrice")) || 50000000,
   });
+
+  const categorySelectValue = Array.isArray(filters.category) ? "" : filters.category;
 
   const filteredProperties = useMemo(() => {
     const filtered = filterProperties(properties, filters);
@@ -89,7 +95,7 @@ export default function Listings() {
           <div>
             <label className="text-sm font-medium text-slate-600">Category</label>
             <select
-              value={filters.category}
+              value={categorySelectValue}
               onChange={(event) => updateFilter("category", event.target.value)}
               className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
             >

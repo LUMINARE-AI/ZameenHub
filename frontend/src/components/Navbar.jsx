@@ -29,8 +29,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: "Home", to: "/" },
-    { label: "Buy Plots", to: "/listings?category=Plots" },
-    { label: "Land", to: "/listings?category=Commercial+Land" },
+    { label: "Buy Plots", to: "/buy-plots" },
     { label: "Sell", to: "/add" },
     ...(session.loggedIn ? [{ label: "Dashboard", to: "/dashboard" }] : []),
     ...(session.user?.role === "admin" ? [{ label: "Admin", to: "/admin" }] : []),
@@ -95,7 +94,7 @@ export default function Navbar() {
               </Link>
             </>
           )}
-          <Link to="/listings">
+          <Link to="/buy-plots">
             <Button variant="primary" className="px-4 py-2.5">
               Explore Plots
             </Button>
@@ -147,7 +146,7 @@ export default function Navbar() {
                 </Link>
               </>
             )}
-            <Link to="/listings?category=Plots" onClick={() => setOpen(false)} className="w-full">
+            <Link to="/buy-plots" onClick={() => setOpen(false)} className="w-full">
               <Button className="w-full">Explore Plots</Button>
             </Link>
           </div>
