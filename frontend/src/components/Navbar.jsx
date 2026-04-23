@@ -28,6 +28,7 @@ export default function Navbar() {
   );
 
   const navItems = [
+    { label: "Home", to: "/" },
     { label: "Buy Plots", to: "/listings?category=Plots" },
     { label: "Land", to: "/listings?category=Commercial+Land" },
     { label: "Sell", to: "/add" },
@@ -61,7 +62,7 @@ export default function Navbar() {
               to={item.to}
               className={({ isActive }) =>
                 `text-sm font-medium transition ${
-                  isActive ? "text-slate-950" : "text-slate-500 hover:text-slate-900"
+                  isActive ? "text-slate-950 underline underline-offset-4 decoration-2 decoration-blue-600" : "text-slate-500 hover:text-slate-900"
                 }`
               }
             >
@@ -119,7 +120,13 @@ export default function Navbar() {
                 key={item.label}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+                className={({ isActive }) =>
+                  `rounded-2xl px-4 py-3 text-sm font-medium transition ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700 underline underline-offset-4 decoration-2 decoration-blue-600"
+                      : "text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+                  }`
+                }
               >
                 {item.label}
               </NavLink>
