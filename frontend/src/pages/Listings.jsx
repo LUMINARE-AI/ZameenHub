@@ -7,7 +7,12 @@ import Toast from "../components/ui/Toast";
 import API from "../services/api";
 import useProperties from "../hooks/useProperties";
 import { getStoredUser } from "../utils/auth";
-import { filterProperties, sortProperties } from "../utils/property";
+import {
+  BUY_CATEGORIES,
+  PROPERTY_CATEGORIES,
+  filterProperties,
+  sortProperties,
+} from "../utils/property";
 
 function canDeleteProperty(user, property) {
   if (!user) {
@@ -27,7 +32,8 @@ export default function Listings() {
   const user = getStoredUser();
   const [filters, setFilters] = useState({
     location: searchParams.get("location") || "",
-    type: searchParams.get("type") || "",
+    category: searchParams.get("category") || "",
+    type: "",
     bedrooms: "",
     maxPrice: Number(searchParams.get("maxPrice")) || 50000000,
   });
@@ -66,8 +72,8 @@ export default function Listings() {
   return (
     <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
       <aside className="h-fit rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)] lg:sticky lg:top-28">
-        <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Filters</p>
-        <h1 className="mt-3 text-2xl font-semibold text-slate-950">Refine your search</h1>
+            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Filters</p>
+            <h1 className="mt-3 text-2xl font-semibold text-slate-950">Find land and plots</h1>
 
         <div className="mt-6 space-y-5">
           <div>
@@ -81,16 +87,18 @@ export default function Listings() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-600">Property type</label>
+            <label className="text-sm font-medium text-slate-600">Category</label>
             <select
-              value={filters.type}
-              onChange={(event) => updateFilter("type", event.target.value)}
+              value={filters.category}
+              onChange={(event) => updateFilter("category", event.target.value)}
               className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
             >
-              <option value="">All types</option>
-              <option value="Apartment">Apartment</option>
-              <option value="Villa">Villa</option>
-              <option value="Townhouse">Townhouse</option>
+              <option value="">All categories</option>
+              {PROPERTY_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -109,19 +117,20 @@ export default function Listings() {
             />
           </div>
 
-          <div>
-            <label className="text-sm font-medium text-slate-600">Bedrooms</label>
-            <select
-              value={filters.bedrooms}
-              onChange={(event) => updateFilter("bedrooms", event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-            >
-              <option value="">Any</option>
-              <option value="1">1+</option>
-              <option value="2">2+</option>
-              <option value="3">3+</option>
-              <option value="4">4+</option>
-            </select>
+          <div className="rounded-3xl bg-blue-50 p-4">
+            <p className="text-sm font-bold text-blue-900">Popular buy categories</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {BUY_CATEGORIES.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => updateFilter("category", category)}
+                  className="rounded-full bg-white px-3 py-2 text-xs font-semibold text-slate-700 ring-1 ring-blue-100"
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </aside>
@@ -129,12 +138,12 @@ export default function Listings() {
       <section className="space-y-6">
         <div className="flex flex-col gap-4 rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)] sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Listings</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Marketplace</p>
             <h2 className="mt-2 text-3xl font-semibold text-slate-950">
-              Premium spaces tailored to your search
+              Approved plots, land and spaces
             </h2>
             <p className="mt-2 text-sm text-slate-500">
-              {loading ? "Loading homes..." : `${filteredProperties.length} curated properties available`}
+              {loading ? "Loading listings..." : `${filteredProperties.length} backend listings found`}
             </p>
           </div>
 
@@ -172,7 +181,7 @@ export default function Listings() {
 
         {!loading && filteredProperties.length === 0 ? (
           <div className="rounded-[32px] border border-dashed border-slate-300 bg-white/70 px-6 py-12 text-center">
-            <p className="text-xl font-semibold text-slate-900">No homes match these filters yet.</p>
+            <p className="text-xl font-semibold text-slate-900">No properties found</p>
             <p className="mt-2 text-sm text-slate-500">
               Try widening the budget or changing the property type.
             </p>

@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState({
     title: "",
+    category: "Plots",
     location: "",
     price: "",
     description: "",
@@ -75,6 +76,7 @@ export default function Dashboard() {
     setEditingId(property._id);
     setDraft({
       title: property.title || "",
+      category: property.category || "Plots",
       location: property.location || "",
       price: property.price || "",
       description: property.description || "",
@@ -83,13 +85,14 @@ export default function Dashboard() {
 
   function stopEditing() {
     setEditingId(null);
-    setDraft({ title: "", location: "", price: "", description: "" });
+    setDraft({ title: "", category: "Plots", location: "", price: "", description: "" });
   }
 
   async function saveProperty(id) {
     try {
       await API.put(`/properties/${id}`, {
         title: draft.title.trim(),
+        category: draft.category,
         location: draft.location.trim(),
         price: Number(draft.price),
         description: draft.description.trim(),
@@ -191,6 +194,19 @@ export default function Dashboard() {
                         setDraft((current) => ({ ...current, location: event.target.value }))
                       }
                     />
+                    <select
+                      value={draft.category}
+                      onChange={(event) =>
+                        setDraft((current) => ({ ...current, category: event.target.value }))
+                      }
+                      className="w-full rounded-[24px] border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                    >
+                      {["Plots", "Commercial Land", "Agricultural Land", "Flats", "Shops", "PG", "Flats / Homes"].map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
                     <Input
                       value={draft.price}
                       onChange={(event) =>
@@ -215,6 +231,9 @@ export default function Dashboard() {
                 ) : (
                   <>
                     <h2 className="text-xl font-semibold text-slate-950">{property.title}</h2>
+                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-600">
+                      {property.category || "Plots"}
+                    </p>
                     <p className="mt-2 text-sm text-slate-500">{property.location}</p>
                     <p className="mt-4 text-2xl font-semibold text-slate-950">
                       {formatPrice(property.price)}

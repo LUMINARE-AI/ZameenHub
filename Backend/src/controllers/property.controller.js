@@ -1,5 +1,15 @@
 import Property from "../models/property.model.js";
 
+const PROPERTY_CATEGORIES = [
+  "Plots",
+  "Commercial Land",
+  "Agricultural Land",
+  "Flats",
+  "Shops",
+  "PG",
+  "Flats / Homes",
+];
+
 // ➕ ADD PROPERTY
 export const addProperty = async (req, res) => {
   try {
@@ -14,6 +24,7 @@ export const addProperty = async (req, res) => {
     }
 
     const title = String(req.body.title || "").trim();
+    const category = String(req.body.category || "Plots").trim();
     const price = Number(req.body.price);
     const location = String(req.body.location || "").trim();
     const description = String(req.body.description || "").trim();
@@ -23,8 +34,13 @@ export const addProperty = async (req, res) => {
       return res.status(400).json({ message: "Missing fields" });
     }
 
+    if (!PROPERTY_CATEGORIES.includes(category)) {
+      return res.status(400).json({ message: "Select a valid property category" });
+    }
+
     const property = await Property.create({
       title,
+      category,
       price,
       location,
       description,
@@ -45,7 +61,24 @@ export const addProperty = async (req, res) => {
 // 📦 GET APPROVED PROPERTIES
 export const getProperties = async (req, res) => {
   try {
-    const properties = await Property.find({ status: "approved" })
+    const filters = { status: "approved" };
+    const category = String(req.query.category || "").trim();
+    const location = String(req.query.location || "").trim();
+    const maxPrice = Number(req.query.maxPrice);
+
+    if (category) {
+      filters.category = category;
+    }
+
+    if (location) {
+      filters.location = { $regex: location, $options: "i" };
+    }
+
+    if (Number.isFinite(maxPrice) && maxPrice > 0) {
+      filters.price = { $lte: maxPrice };
+    }
+
+    const properties = await Property.find(filters)
       .populate("owner", "name phone")
       .sort({ createdAt: -1 });
 
@@ -70,6 +103,10 @@ export const updateProperty = async (req, res) => {
     }
 
     const updates = { ...req.body };
+
+    if (updates.category !== undefined && !PROPERTY_CATEGORIES.includes(updates.category)) {
+      return res.status(400).json({ message: "Select a valid property category" });
+    }
 
     // 🔥 SAFE PRICE
     if (updates.price !== undefined) {

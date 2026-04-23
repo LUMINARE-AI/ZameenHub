@@ -1,3 +1,17 @@
+export const BUY_CATEGORIES = [
+  "Plots",
+  "Commercial Land",
+  "Agricultural Land",
+  "Flats",
+  "Shops",
+];
+
+export const RENT_CATEGORIES = ["Shops", "PG", "Flats / Homes"];
+
+export const PROPERTY_CATEGORIES = Array.from(
+  new Set([...BUY_CATEGORIES, ...RENT_CATEGORIES])
+);
+
 export function formatPrice(price) {
   if (!price && price !== 0) {
     return "Price on request";
@@ -33,6 +47,7 @@ export function normalizeProperty(property, index = 0) {
     ...property,
     _id: property._id || property.id || `generated-${index}`,
     title: property.title || "Premium Residence",
+    category: property.category || "Plots",
     price: numericPrice,
     location,
     city: property.city || location.split(",")[0],
@@ -63,10 +78,11 @@ export function filterProperties(properties, filters) {
       property.location.toLowerCase().includes(filters.location.toLowerCase()) ||
       property.city.toLowerCase().includes(filters.location.toLowerCase());
     const matchesType = !filters.type || property.type === filters.type;
+    const matchesCategory = !filters.category || property.category === filters.category;
     const matchesBedrooms = !filters.bedrooms || property.bedrooms >= Number(filters.bedrooms);
     const matchesPrice = property.price <= filters.maxPrice;
 
-    return matchesLocation && matchesType && matchesBedrooms && matchesPrice;
+    return matchesLocation && matchesType && matchesCategory && matchesBedrooms && matchesPrice;
   });
 }
 

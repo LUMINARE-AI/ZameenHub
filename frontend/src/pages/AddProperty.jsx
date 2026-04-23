@@ -5,6 +5,7 @@ import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import StatusBanner from "../components/StatusBanner";
 import Toast from "../components/ui/Toast";
+import { PROPERTY_CATEGORIES } from "../utils/property";
 
 function ErrorMessage({ message }) {
   if (!message) return null;
@@ -19,6 +20,7 @@ export default function AddProperty() {
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("Plots");
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
@@ -97,6 +99,7 @@ export default function AddProperty() {
 
       const formData = new FormData();
       formData.append("title", title.trim());
+      formData.append("category", category);
       formData.append("price", Number(price));
       formData.append("location", location.trim());
       formData.append("description", description.trim());
@@ -139,10 +142,10 @@ export default function AddProperty() {
     <div className="space-y-6">
       <section className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)]">
         <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">
-          List your property
+          List your plot or property
         </p>
         <h1 className="mt-3 text-3xl font-semibold text-slate-950">
-          Sell or rent your home on ZameenHub
+          Sell land, plots and commercial spaces on ZameenHub
         </h1>
         <p className="mt-2 text-sm text-slate-500">
           Fill in the details below. Your property will be reviewed and published once approved.
@@ -158,10 +161,10 @@ export default function AddProperty() {
             {/* Title */}
             <div>
               <label className="text-sm font-semibold text-slate-700">
-                Property Title <span className="text-rose-500">*</span>
+                Listing Title <span className="text-rose-500">*</span>
               </label>
               <Input
-                placeholder="e.g., Modern 3-BHK Apartment in Downtown"
+                placeholder="e.g., 120 sq yd plot near main road"
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value);
@@ -170,6 +173,23 @@ export default function AddProperty() {
                 className={errors.title ? "border-rose-500 focus:ring-rose-100 focus:border-rose-500" : ""}
               />
               <ErrorMessage message={errors.title} />
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-slate-700">
+                Category <span className="text-rose-500">*</span>
+              </label>
+              <select
+                value={category}
+                onChange={(event) => setCategory(event.target.value)}
+                className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              >
+                {PROPERTY_CATEGORIES.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Price */}
@@ -196,7 +216,7 @@ export default function AddProperty() {
                 Location <span className="text-rose-500">*</span>
               </label>
               <Input
-                placeholder="e.g., Gulshan-e-Iqbal, Karachi"
+                placeholder="e.g., Sector 10, Noida"
                 value={location}
                 onChange={(e) => {
                   setLocation(e.target.value);
@@ -213,7 +233,7 @@ export default function AddProperty() {
                 Description <span className="text-rose-500">*</span>
               </label>
               <textarea
-                placeholder="Describe your property (minimum 20 characters)..."
+                placeholder="Describe access road, plot size, nearby landmarks, approvals..."
                 value={description}
                 onChange={(e) => {
                   setDescription(e.target.value);
@@ -235,7 +255,7 @@ export default function AddProperty() {
           <div className="space-y-6 flex flex-col">
             <div>
               <label className="text-sm font-semibold text-slate-700">
-                Property Image <span className="text-rose-500">*</span>
+                Plot / Property Image <span className="text-rose-500">*</span>
               </label>
               <div
                 className={`mt-3 rounded-2xl border-2 border-dashed transition cursor-pointer flex items-center justify-center min-h-[320px] overflow-hidden ${
@@ -259,7 +279,7 @@ export default function AddProperty() {
                   <div className="text-center p-6">
                     <div className="text-3xl mb-2">📸</div>
                     <p className="text-sm font-medium text-slate-700">
-                      Click to upload property image
+                      Click to upload land or property image
                     </p>
                     <p className="text-xs text-slate-500 mt-1">
                       JPG, PNG up to 10MB
@@ -314,7 +334,7 @@ export default function AddProperty() {
             </li>
             <li className="flex gap-3">
               <span className="text-base">✓</span>
-              <span>Upload a clear, well-lit property image</span>
+              <span>Upload a clear plot, land, shop or property image</span>
             </li>
             <li className="flex gap-3">
               <span className="text-base">✓</span>

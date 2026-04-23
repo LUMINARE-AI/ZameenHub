@@ -5,29 +5,36 @@ import PropertyCard from "../components/PropertyCard";
 import PropertySkeleton from "../components/PropertySkeleton";
 import Button from "../components/ui/Button";
 import useProperties from "../hooks/useProperties";
-import { filterProperties } from "../utils/property";
+import { BUY_CATEGORIES } from "../utils/property";
 
-const metrics = [
-  { label: "Verified homes", value: "12k+" },
-  { label: "Premium localities", value: "320+" },
-  { label: "Average response time", value: "12 min" },
+const landStats = [
+  { label: "Plot-first listings", value: "Land" },
+  { label: "Verified seller data", value: "Direct" },
+  { label: "Marketplace type", value: "Buy / Rent" },
 ];
-
-const quickActions = ["Buy", "Rent", "Sell"];
 
 export default function Home() {
   const navigate = useNavigate();
-  const { properties, featuredProperties, loading } = useProperties();
+  const { properties, loading } = useProperties();
   const [filters, setFilters] = useState({
     location: "",
     maxPrice: 50000000,
-    type: "",
-    bedrooms: "",
+    category: "Plots",
   });
 
-  const trending = useMemo(
-    () => filterProperties(featuredProperties.length ? featuredProperties : properties, filters).slice(0, 5),
-    [featuredProperties, filters, properties]
+  const featuredPlots = useMemo(
+    () => properties.filter((property) => property.category === "Plots").slice(0, 4),
+    [properties]
+  );
+
+  const recentLands = useMemo(
+    () =>
+      properties
+        .filter((property) =>
+          ["Plots", "Commercial Land", "Agricultural Land"].includes(property.category)
+        )
+        .slice(0, 6),
+    [properties]
   );
 
   function updateFilter(key, value) {
@@ -37,162 +44,149 @@ export default function Home() {
   function handleSearch() {
     const params = new URLSearchParams();
 
-    if (filters.location) {
-      params.set("location", filters.location);
-    }
-    if (filters.type) {
-      params.set("type", filters.type);
-    }
-    if (filters.maxPrice) {
-      params.set("maxPrice", String(filters.maxPrice));
-    }
+    if (filters.location) params.set("location", filters.location);
+    if (filters.category) params.set("category", filters.category);
+    if (filters.maxPrice) params.set("maxPrice", String(filters.maxPrice));
 
     navigate(`/listings?${params.toString()}`);
   }
 
   return (
     <div className="space-y-10 pb-8">
-      <section className="grid gap-8 overflow-hidden rounded-[40px] border border-white/60 bg-slate-950 px-6 py-8 text-white shadow-[0_30px_100px_-35px_rgba(15,23,42,0.9)] lg:grid-cols-[1.2fr_0.8fr] lg:px-10 lg:py-10">
-        <div className="relative z-10 space-y-8">
-          <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-blue-200">
-            Curated premium real estate
+      <section className="overflow-hidden rounded-[36px] border border-slate-200 bg-white shadow-[0_26px_90px_-50px_rgba(15,23,42,0.55)]">
+        <div className="grid gap-8 p-6 lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
+          <div className="space-y-7">
+            <div className="inline-flex rounded-full bg-emerald-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-emerald-700">
+              Real Estate Marketplace
+            </div>
+            <div className="max-w-3xl">
+              <h1 className="text-4xl font-extrabold leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                Buy plots, land, shops and verified spaces with confidence.
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600">
+                ZameenHub is now focused on land and plot discovery first, with
+                clean category filters, verified seller contacts, and approval-based listings.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              {BUY_CATEGORIES.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => {
+                    updateFilter("category", category);
+                    navigate(`/listings?category=${encodeURIComponent(category)}`);
+                  }}
+                  className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                    category === "Plots"
+                      ? "border-blue-600 bg-blue-600 text-white"
+                      : "border-slate-200 bg-white text-slate-700 hover:border-blue-300"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            <HeroSearch filters={filters} onChange={updateFilter} onSearch={handleSearch} />
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {landStats.map((item) => (
+                <div key={item.label} className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-2xl font-extrabold text-slate-950">{item.value}</p>
+                  <p className="mt-1 text-sm text-slate-500">{item.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="max-w-2xl space-y-5">
-            <h1 className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-              Find a home that feels unmistakably elevated.
-            </h1>
-            <p className="max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
-              Discover polished listings, smart search flows, and neighborhood-first
-              browsing crafted for modern buyers, renters, and sellers.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            {quickActions.map((label, index) => (
-              <Button
-                key={label}
-                variant={index === 0 ? "primary" : "secondary"}
-                className={index === 0 ? "" : "bg-white/10 text-white ring-1 ring-white/15 hover:bg-white/15"}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
-
-          <HeroSearch filters={filters} onChange={updateFilter} onSearch={handleSearch} />
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            {metrics.map((metric) => (
-              <div
-                key={metric.label}
-                className="rounded-[28px] border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-sm"
-              >
-                <p className="text-3xl font-semibold text-white">{metric.value}</p>
-                <p className="mt-2 text-sm text-slate-300">{metric.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative min-h-[420px] overflow-hidden rounded-[32px]">
-          <img
-            src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=80"
-            alt="Luxury property exterior"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
-          <div className="absolute bottom-6 left-6 right-6 rounded-[28px] border border-white/15 bg-white/10 p-5 backdrop-blur-md">
-            <p className="text-sm uppercase tracking-[0.28em] text-blue-200">Featured estate</p>
-            <p className="mt-3 text-2xl font-semibold">Oceanfront modern villa</p>
-            <p className="mt-2 max-w-sm text-sm leading-6 text-slate-200">
-              Elegant interiors, private pool deck, and resort-style amenities in a
-              headline-worthy address.
-            </p>
+          <div className="relative min-h-[360px] overflow-hidden rounded-[30px] bg-[linear-gradient(135deg,_#dcfce7,_#eff6ff_45%,_#f8fafc)] p-6">
+            <div className="absolute inset-0 opacity-70 [background-image:linear-gradient(90deg,rgba(15,23,42,0.08)_1px,transparent_1px),linear-gradient(rgba(15,23,42,0.08)_1px,transparent_1px)] [background-size:44px_44px]" />
+            <div className="relative flex h-full flex-col justify-end rounded-[26px] border border-white/80 bg-white/75 p-6 shadow-xl backdrop-blur">
+              <p className="text-sm font-bold uppercase tracking-[0.24em] text-blue-700">
+                Plot-focused marketplace
+              </p>
+              <h2 className="mt-3 text-3xl font-extrabold text-slate-950">
+                Search by location, category and budget.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Every card below is rendered from approved backend data.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="space-y-5">
-        <div className="flex items-end justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">
-              Trending now
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-blue-600">
+              Featured Plots
             </p>
-            <h2 className="mt-2 text-3xl font-semibold text-slate-950">
-              High-interest homes buyers are saving this week
+            <h2 className="mt-2 text-3xl font-extrabold text-slate-950">
+              Plot listings ready for serious buyers
             </h2>
           </div>
-          <Link to="/listings" className="text-sm font-semibold text-slate-600 transition hover:text-slate-950">
-            Browse all listings →
+          <Link to="/listings?category=Plots" className="text-sm font-bold text-blue-700">
+            View all plots
           </Link>
         </div>
 
-        <div className="flex gap-5 overflow-x-auto pb-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {loading
-            ? Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="min-w-[320px] flex-1">
-                  <PropertySkeleton />
-                </div>
-              ))
-            : trending.map((property, index) => (
-                <div key={property._id} className="min-w-[320px] max-w-[380px] flex-1">
-                  <PropertyCard property={property} priority={index === 0} />
-                </div>
+            ? Array.from({ length: 4 }).map((_, index) => <PropertySkeleton key={index} />)
+            : featuredPlots.map((property, index) => (
+                <PropertyCard key={property._id} property={property} priority={index === 0} />
+              ))}
+        </div>
+
+        {!loading && featuredPlots.length === 0 ? (
+          <div className="rounded-[28px] border border-dashed border-slate-300 bg-white/80 p-8 text-center">
+            <p className="text-lg font-bold text-slate-950">No featured plots found</p>
+            <p className="mt-2 text-sm text-slate-500">Approved plot listings will appear here.</p>
+          </div>
+        ) : null}
+      </section>
+
+      <section className="space-y-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-emerald-700">
+              Recently Added Lands
+            </p>
+            <h2 className="mt-2 text-3xl font-extrabold text-slate-950">
+              New land opportunities from approved sellers
+            </h2>
+          </div>
+          <Link to="/listings" className="text-sm font-bold text-blue-700">
+            Browse marketplace
+          </Link>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {loading
+            ? Array.from({ length: 3 }).map((_, index) => <PropertySkeleton key={index} />)
+            : recentLands.map((property, index) => (
+                <PropertyCard key={property._id} property={property} priority={index === 0} />
               ))}
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="rounded-[36px] border border-white/70 bg-white/80 p-7 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.35)]">
-          <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">
-            Why ZameenHub
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold text-slate-950">
-            Designed to feel like a premium real estate concierge
-          </h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {[
-              "Responsive card layouts with clean spacing",
-              "Luxury-first visual language and editorial imagery",
-              "Fast search, save, and compare workflows",
-              "Production-ready sections for listings and detail pages",
-            ].map((item) => (
-              <div
-                key={item}
-                className="rounded-[24px] border border-slate-100 bg-slate-50 px-4 py-4 text-sm leading-6 text-slate-600"
-              >
-                {item}
-              </div>
-            ))}
+      <section className="rounded-[34px] border border-slate-200 bg-slate-950 p-7 text-white">
+        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-blue-300">
+              Sell land faster
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold">List your plot with category-first discovery.</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-300">
+              Add location, price, category and seller-owned images. Admin approval keeps the marketplace clean.
+            </p>
           </div>
-        </div>
-
-        <div className="rounded-[36px] border border-white/70 bg-[linear-gradient(145deg,_rgba(15,23,42,0.98),_rgba(30,41,59,0.95))] p-7 text-white shadow-[0_24px_70px_-32px_rgba(15,23,42,0.5)]">
-          <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-300">
-                Seller tools
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold">List smarter and get discovered faster</h2>
-            </div>
-            <Link to="/add">
-              <Button variant="secondary">Start selling</Button>
-            </Link>
-          </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {[
-              { value: "94%", label: "buyers prefer image-rich listings" },
-              { value: "3x", label: "higher visibility with premium tags" },
-              { value: "24/7", label: "always-on inquiry capture" },
-            ].map((item) => (
-              <div key={item.label} className="rounded-[24px] border border-white/10 bg-white/5 px-4 py-5">
-                <p className="text-3xl font-semibold">{item.value}</p>
-                <p className="mt-2 text-sm text-slate-300">{item.label}</p>
-              </div>
-            ))}
-          </div>
+          <Link to="/add">
+            <Button variant="secondary">List a Plot</Button>
+          </Link>
         </div>
       </section>
     </div>

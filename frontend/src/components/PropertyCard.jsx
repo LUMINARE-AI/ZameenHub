@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatArea, formatPrice } from "../utils/property";
 
@@ -18,8 +17,6 @@ export default function PropertyCard({
   deleting = false,
   onDelete,
 }) {
-  const [saved, setSaved] = useState(false);
-
   return (
     <article className="group overflow-hidden rounded-[28px] border border-white/80 bg-white/90 shadow-[0_20px_70px_-30px_rgba(15,23,42,0.35)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_25px_80px_-28px_rgba(30,64,175,0.32)]">
       <div className="relative">
@@ -31,18 +28,8 @@ export default function PropertyCard({
         />
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
           <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">
-            {property.type}
+            {property.category}
           </span>
-          <button
-            type="button"
-            onClick={() => setSaved((current) => !current)}
-            className={`inline-flex h-10 w-10 items-center justify-center rounded-full shadow-sm transition ${
-              saved ? "bg-slate-950 text-white" : "bg-white/90 text-slate-900"
-            }`}
-            aria-label="Save property"
-          >
-            {saved ? "Saved" : "Save"}
-          </button>
         </div>
       </div>
 

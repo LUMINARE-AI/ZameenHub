@@ -28,7 +28,8 @@ export default function Navbar() {
   );
 
   const navItems = [
-    { label: "Buy", to: "/" },
+    { label: "Buy Plots", to: "/listings?category=Plots" },
+    { label: "Land", to: "/listings?category=Commercial+Land" },
     { label: "Sell", to: "/add" },
     ...(session.loggedIn ? [{ label: "Dashboard", to: "/dashboard" }] : []),
     ...(session.user?.role === "admin" ? [{ label: "Admin", to: "/admin" }] : []),
@@ -49,7 +50,7 @@ export default function Navbar() {
           </div>
           <div>
             <p className="text-base font-semibold text-slate-900">ZameenHub</p>
-            <p className="text-xs text-slate-500">Find premium spaces</p>
+            <p className="text-xs text-slate-500">Real Estate Marketplace</p>
           </div>
         </Link>
 
@@ -95,7 +96,7 @@ export default function Navbar() {
           )}
           <Link to="/listings">
             <Button variant="primary" className="px-4 py-2.5">
-              Explore Listings
+              Explore Plots
             </Button>
           </Link>
         </div>
@@ -139,8 +140,8 @@ export default function Navbar() {
                 </Link>
               </>
             )}
-            <Link to="/listings" onClick={() => setOpen(false)} className="w-full">
-              <Button className="w-full">Explore Listings</Button>
+            <Link to="/listings?category=Plots" onClick={() => setOpen(false)} className="w-full">
+              <Button className="w-full">Explore Plots</Button>
             </Link>
           </div>
         </div>

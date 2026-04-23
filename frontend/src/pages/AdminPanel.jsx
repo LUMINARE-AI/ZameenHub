@@ -28,9 +28,6 @@ export default function AdminPanel() {
   useEffect(() => {
     let active = true;
 
-    API.get("/admin/properties/pending")
-    .then(res => console.log(res.data))
-
     async function loadPending() {
       try {
         setLoading(true);
@@ -131,6 +128,9 @@ export default function AdminPanel() {
                 Pending
               </span>
               <h2 className="mt-4 text-xl font-semibold text-slate-950">{property.title}</h2>
+              <p className="mt-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-600">
+                {property.category || "Plots"}
+              </p>
               <p className="mt-2 text-sm text-slate-500">{property.location}</p>
               <p className="mt-4 text-2xl font-semibold text-slate-950">
                 {formatPrice(property.price)}

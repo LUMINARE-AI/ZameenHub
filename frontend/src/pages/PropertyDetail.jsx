@@ -17,6 +17,7 @@ export default function PropertyDetail() {
   const { propertyId } = useParams();
   const { properties, loading } = useProperties();
   const [activeImage, setActiveImage] = useState(0);
+  const [showSeller, setShowSeller] = useState(false);
 
   const property = useMemo(
     () => properties.find((item) => item._id === propertyId),
@@ -83,7 +84,9 @@ export default function PropertyDetail() {
         <section className="rounded-[36px] border border-white/70 bg-white/90 p-7 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)]">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">{property.type}</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">
+                {property.category}
+              </p>
               <h1 className="mt-3 text-3xl font-semibold text-slate-950">{property.title}</h1>
               <p className="mt-2 text-sm text-slate-500">{property.location}</p>
             </div>
@@ -120,49 +123,40 @@ export default function PropertyDetail() {
 
       <aside className="h-fit rounded-[36px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)] lg:sticky lg:top-28">
         <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">
-          Quick actions
+          Seller contact
         </p>
-        <h2 className="mt-3 text-2xl font-semibold text-slate-950">Connect with an agent</h2>
+        <h2 className="mt-3 text-2xl font-semibold text-slate-950">Contact Seller</h2>
         <p className="mt-3 text-sm leading-6 text-slate-500">
-          Schedule a visit, request a brochure, or ask for negotiation guidance on this
-          property.
+          Click below to view the seller details populated from the backend owner record.
         </p>
 
         <div className="mt-6 space-y-4">
-          <Button className="w-full">Contact agent</Button>
-          <Button variant="secondary" className="w-full">
-            Schedule tour
-          </Button>
-          <Button variant="ghost" className="w-full">
-            Save property
+          <Button className="w-full" onClick={() => setShowSeller(true)}>
+            Contact Seller
           </Button>
         </div>
 
-        <div className="mt-8 rounded-[28px] border border-slate-200 bg-white p-5">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-400">Seller details</p>
-          <p className="mt-3 text-lg font-semibold text-slate-950">
-            {property.owner?.name || "Listing seller"}
-          </p>
-          <p className="mt-2 text-sm text-slate-500">
-            {property.owner?.phone || property.contact || "Phone unavailable"}
-          </p>
-          {property.owner?.phone ? (
-            <a
-              href={`tel:${property.owner.phone}`}
-              className="mt-4 inline-flex rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
-              Call seller
-            </a>
-          ) : null}
-        </div>
-
-        <div className="mt-8 rounded-[28px] bg-slate-50 p-5">
-          <p className="text-sm font-semibold text-slate-900">Agent hotline</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{property.contact || "Contact not available"}</p>
-          <p className="mt-2 text-sm text-slate-500">
-            Available every day from 9:00 AM to 8:00 PM.
-          </p>
-        </div>
+        {showSeller ? (
+          <div className="mt-8 rounded-[28px] border border-slate-200 bg-white p-5">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-400">
+              Seller details
+            </p>
+            <p className="mt-3 text-lg font-semibold text-slate-950">
+              {property.owner?.name || "Seller name unavailable"}
+            </p>
+            <p className="mt-2 text-sm text-slate-500">
+              {property.owner?.phone || property.contact || "Phone unavailable"}
+            </p>
+            {property.owner?.phone ? (
+              <a
+                href={`tel:${property.owner.phone}`}
+                className="mt-4 inline-flex rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+              >
+                Call Seller
+              </a>
+            ) : null}
+          </div>
+        ) : null}
       </aside>
     </div>
   );

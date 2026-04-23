@@ -10,6 +10,7 @@ import Listings from "./pages/Listings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PropertyDetail from "./pages/PropertyDetail";
+import InfoPage from "./pages/InfoPage";
 
 function AppLayout() {
   return (
@@ -25,6 +26,10 @@ function AppLayout() {
               <Route path="/property/:propertyId" element={<PropertyDetail />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/about" element={<InfoPage type="about" />} />
+              <Route path="/contact" element={<InfoPage type="contact" />} />
+              <Route path="/terms" element={<InfoPage type="terms" />} />
+              <Route path="/privacy" element={<InfoPage type="privacy" />} />
               <Route
                 path="/add"
                 element={
