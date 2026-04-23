@@ -7,6 +7,22 @@ export default function useProperties() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  async function fetchProperties() {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await API.get("/properties");
+      const remoteProperties = Array.isArray(response.data) ? response.data : [];
+      setProperties(remoteProperties.map(normalizeProperty));
+    } catch (err) {
+      setProperties([]);
+      setError(err.response?.data?.message || "Unable to load property listings.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     let active = true;
 
@@ -46,5 +62,5 @@ export default function useProperties() {
     [properties]
   );
 
-  return { properties, featuredProperties, loading, error };
+  return { properties, featuredProperties, loading, error, refetch: fetchProperties };
 }

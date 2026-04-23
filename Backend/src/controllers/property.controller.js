@@ -106,7 +106,10 @@ export const deleteProperty = async (req, res) => {
       return res.status(404).json({ message: "Property not found" });
     }
 
-    if (property.owner.toString() !== req.user._id.toString()) {
+    if (
+      req.user.role !== "admin" &&
+      property.owner.toString() !== req.user._id.toString()
+    ) {
       return res.status(403).json({ message: "Not allowed" });
     }
 

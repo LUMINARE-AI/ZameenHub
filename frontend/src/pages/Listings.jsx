@@ -3,13 +3,28 @@ import { useSearchParams } from "react-router-dom";
 import PropertyCard from "../components/PropertyCard";
 import PropertySkeleton from "../components/PropertySkeleton";
 import StatusBanner from "../components/StatusBanner";
+import Toast from "../components/ui/Toast";
+import API from "../services/api";
 import useProperties from "../hooks/useProperties";
+import { getStoredUser } from "../utils/auth";
 import { filterProperties, sortProperties } from "../utils/property";
 
+function canDeleteProperty(user, property) {
+  if (!user) {
+    return false;
+  }
+
+  return user.role === "admin" || property.owner?._id === user._id;
+}
+
 export default function Listings() {
-  const { properties, loading, error } = useProperties();
+  const { properties, loading, error, refetch } = useProperties();
   const [searchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState("newest");
+  const [deletingId, setDeletingId] = useState("");
+  const [status, setStatus] = useState({ tone: "info", message: "" });
+  const [toast, setToast] = useState({ message: "", tone: "info" });
+  const user = getStoredUser();
   const [filters, setFilters] = useState({
     location: searchParams.get("location") || "",
     type: searchParams.get("type") || "",
@@ -24,6 +39,28 @@ export default function Listings() {
 
   function updateFilter(key, value) {
     setFilters((current) => ({ ...current, [key]: value }));
+  }
+
+  async function handleDeleteProperty(id) {
+    if (!window.confirm("Are you sure?")) {
+      return;
+    }
+
+    try {
+      setDeletingId(id);
+      setStatus({ tone: "info", message: "" });
+      await API.delete(`/properties/${id}`);
+      setStatus({ tone: "success", message: "Property deleted successfully." });
+      setToast({ message: "Property deleted successfully.", tone: "success" });
+      await refetch();
+    } catch (deleteError) {
+      const message =
+        deleteError.response?.data?.message || "Unable to delete this property.";
+      setStatus({ tone: "error", message });
+      setToast({ message, tone: "error" });
+    } finally {
+      setDeletingId("");
+    }
   }
 
   return (
@@ -116,12 +153,20 @@ export default function Listings() {
         </div>
 
         {error ? <StatusBanner tone="error" message={error} /> : null}
+        <StatusBanner tone={status.tone} message={status.message} />
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {loading
             ? Array.from({ length: 6 }).map((_, index) => <PropertySkeleton key={index} />)
             : filteredProperties.map((property, index) => (
-                <PropertyCard key={property._id} property={property} priority={index < 2} />
+                <PropertyCard
+                  key={property._id}
+                  property={property}
+                  priority={index < 2}
+                  canDelete={canDeleteProperty(user, property)}
+                  deleting={deletingId === property._id}
+                  onDelete={handleDeleteProperty}
+                />
               ))}
         </div>
 
@@ -134,6 +179,7 @@ export default function Listings() {
           </div>
         ) : null}
       </section>
+      <Toast message={toast.message} tone={toast.tone} />
     </div>
   );
 }

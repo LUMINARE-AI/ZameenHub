@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import StatusBanner from "../components/StatusBanner";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
+import Toast from "../components/ui/Toast";
 import API from "../services/api";
 import { formatPrice } from "../utils/property";
 
@@ -11,6 +12,7 @@ export default function Dashboard() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(location.state?.status || { tone: "info", message: "" });
+  const [toast, setToast] = useState({ message: "", tone: "info" });
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState({
     title: "",
@@ -105,16 +107,23 @@ export default function Dashboard() {
   }
 
   async function deleteProperty(id) {
+    if (!window.confirm("Are you sure?")) {
+      return;
+    }
+
     try {
       await API.delete(`/properties/${id}`);
       setStatus({ tone: "success", message: "Property deleted successfully." });
+      setToast({ message: "Property deleted successfully.", tone: "success" });
       await fetchMyProperties();
     } catch (error) {
       console.log(error);
+      const message = error.response?.data?.message || "Unable to delete the property.";
       setStatus({
         tone: "error",
-        message: error.response?.data?.message || "Unable to delete the property.",
+        message,
       });
+      setToast({ message, tone: "error" });
     }
   }
 
@@ -227,6 +236,7 @@ export default function Dashboard() {
           })
         )}
       </section>
+      <Toast message={toast.message} tone={toast.tone} />
     </div>
   );
 }

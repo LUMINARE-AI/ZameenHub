@@ -11,7 +11,13 @@ function Stat({ label, value }) {
   );
 }
 
-export default function PropertyCard({ property, priority = false }) {
+export default function PropertyCard({
+  property,
+  priority = false,
+  canDelete = false,
+  deleting = false,
+  onDelete,
+}) {
   const [saved, setSaved] = useState(false);
 
   return (
@@ -35,7 +41,7 @@ export default function PropertyCard({ property, priority = false }) {
             }`}
             aria-label="Save property"
           >
-            {saved ? "♥" : "♡"}
+            {saved ? "Saved" : "Save"}
           </button>
         </div>
       </div>
@@ -44,7 +50,10 @@ export default function PropertyCard({ property, priority = false }) {
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-2xl font-semibold text-slate-950">{formatPrice(property.price)}</p>
-            <Link to={`/property/${property._id}`} className="mt-2 block text-lg font-semibold text-slate-900">
+            <Link
+              to={`/property/${property._id}`}
+              className="mt-2 block text-lg font-semibold text-slate-900"
+            >
               {property.title}
             </Link>
             <p className="mt-1 text-sm text-slate-500">{property.location}</p>
@@ -63,7 +72,7 @@ export default function PropertyCard({ property, priority = false }) {
         {property.owner?.name || property.owner?.phone ? (
           <p className="text-sm text-slate-600">
             Seller: {property.owner?.name || "Private owner"}
-            {property.owner?.phone ? ` • ${property.owner.phone}` : ""}
+            {property.owner?.phone ? ` - ${property.owner.phone}` : ""}
           </p>
         ) : null}
 
@@ -75,13 +84,26 @@ export default function PropertyCard({ property, priority = false }) {
           <Stat label="Area" value={formatArea(property.area)} />
         </div>
 
-        <Link
-          to={`/property/${property._id}`}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 transition hover:text-blue-700"
-        >
-          View details
-          <span aria-hidden="true">→</span>
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Link
+            to={`/property/${property._id}`}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 transition hover:text-blue-700"
+          >
+            View details
+            <span aria-hidden="true">-&gt;</span>
+          </Link>
+
+          {canDelete ? (
+            <button
+              type="button"
+              onClick={() => onDelete?.(property._id)}
+              disabled={deleting}
+              className="rounded-full bg-slate-950 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </button>
+          ) : null}
+        </div>
       </div>
     </article>
   );
