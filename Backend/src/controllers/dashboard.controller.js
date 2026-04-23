@@ -9,7 +9,7 @@ export const getMyProperties = async (req, res) => {
     const properties = await Property.find({
       owner: req.user._id,
     })
-      .populate("owner", "name phone email")
+      .populate("owner", "name phone")
       .sort({ createdAt: -1 });
 
     res.json(properties);

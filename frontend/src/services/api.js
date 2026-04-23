@@ -1,19 +1,19 @@
 import axios from "axios";
+import { getStoredToken } from "../utils/auth";
 
 const API = axios.create({
-  baseURL: "https://backend-3rsf.onrender.com/api",
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL || "https://backend-3rsf.onrender.com/api",
 });
 
-
-// 🔥 IMPORTANT INTERCEPTOR
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
+API.interceptors.request.use((request) => {
+  const token = getStoredToken();
 
   if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
+    request.headers.Authorization = `Bearer ${token}`;
   }
 
-  return req;
+  return request;
 });
 
 export default API;
