@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
@@ -32,6 +32,11 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
+    return next();
+  }
+
+  // Skip re-hashing if the controller already stored a bcrypt hash.
+  if (/^\$2[aby]\$\d{2}\$/.test(this.password)) {
     return next();
   }
 

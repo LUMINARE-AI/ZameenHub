@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 
 function normalizePhone(phone) {
@@ -51,15 +52,18 @@ export const signup = async (req, res) => {
     const existingUser = await User.findOne({ phone: normalizedPhone });
 
     if (existingUser) {
-      return res.status(409).json({
-        message: "Phone number already registered. Please login instead.",
+      return res.status(400).json({
+        message: "User already exists",
       });
     }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(normalizedPassword, salt);
 
     const user = await User.create({
       name: trimmedName,
       phone: normalizedPhone,
-      password: normalizedPassword,
+      password: hashedPassword,
     });
 
     res.status(201).json({
@@ -67,11 +71,11 @@ export const signup = async (req, res) => {
       ...buildAuthResponse(user),
     });
   } catch (error) {
-    console.log("SIGNUP ERROR:", error.message);
+    console.log("SIGNUP ERROR:", error);
 
     if (error.code === 11000) {
-      return res.status(409).json({
-        message: "Phone number already registered",
+      return res.status(400).json({
+        message: "User already exists",
       });
     }
 
