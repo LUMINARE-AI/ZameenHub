@@ -29,6 +29,18 @@ export const addProperty = async (req, res) => {
     const location = String(req.body.location || "").trim();
     const description = String(req.body.description || "").trim();
     const image = req.file?.path || req.file?.secure_url || req.file?.url || "";
+    const carpetArea = Number(req.body.carpetArea) || undefined;
+    const configuration = String(req.body.configuration || "").trim();
+    const floorNumber = Number(req.body.floorNumber) || undefined;
+    const totalFloors = Number(req.body.totalFloors) || undefined;
+    const facing = String(req.body.facing || "").trim();
+    const overlooking = String(req.body.overlooking || "").trim();
+    const propertyAge = String(req.body.propertyAge || "").trim();
+    const pricePerSqFt = Number(req.body.pricePerSqFt) || undefined;
+    const highlights = String(req.body.highlights || "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
 
     if (!title || !price || !location) {
       return res.status(400).json({ message: "Missing fields" });
@@ -48,6 +60,16 @@ export const addProperty = async (req, res) => {
       contact: req.user.phone || "",
       owner: req.user._id,
       status: "pending",
+      featured: Boolean(req.body.featured),
+      carpetArea,
+      configuration,
+      floorNumber,
+      totalFloors,
+      facing,
+      overlooking,
+      propertyAge,
+      pricePerSqFt: pricePerSqFt || (carpetArea ? Math.round(price / carpetArea) : undefined),
+      highlights,
     });
 
     res.status(201).json(property);
@@ -108,7 +130,6 @@ export const updateProperty = async (req, res) => {
       return res.status(400).json({ message: "Select a valid property category" });
     }
 
-    // 🔥 SAFE PRICE
     if (updates.price !== undefined) {
       const price = Number(updates.price);
 
@@ -121,6 +142,28 @@ export const updateProperty = async (req, res) => {
       updates.price = price;
     }
 
+    if (updates.carpetArea !== undefined) {
+      const carpetArea = Number(updates.carpetArea);
+      updates.carpetArea = Number.isFinite(carpetArea) ? carpetArea : undefined;
+    }
+
+    if (updates.floorNumber !== undefined) {
+      const floorNumber = Number(updates.floorNumber);
+      updates.floorNumber = Number.isFinite(floorNumber) ? floorNumber : undefined;
+    }
+
+    if (updates.totalFloors !== undefined) {
+      const totalFloors = Number(updates.totalFloors);
+      updates.totalFloors = Number.isFinite(totalFloors) ? totalFloors : undefined;
+    }
+
+    if (updates.pricePerSqFt !== undefined) {
+      const pricePerSqFt = Number(updates.pricePerSqFt);
+      updates.pricePerSqFt = Number.isFinite(pricePerSqFt)
+        ? pricePerSqFt
+        : property.pricePerSqFt;
+    }
+
     const updated = await Property.findByIdAndUpdate(
       req.params.id,
       updates,
@@ -130,6 +173,57 @@ export const updateProperty = async (req, res) => {
     res.json(updated);
   } catch (error) {
     console.log("❌ UPDATE ERROR:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const rateProperty = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Login required to rate properties" });
+    }
+
+    const property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    const rating = Number(req.body.rating);
+    const comment = String(req.body.comment || "").trim();
+
+    if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Rating must be between 1 and 5" });
+    }
+
+    const existingReview = property.reviews.find(
+      (review) => review.user.toString() === req.user._id.toString()
+    );
+
+    if (existingReview) {
+      existingReview.rating = rating;
+      if (comment) {
+        existingReview.comment = comment;
+      }
+      existingReview.updatedAt = new Date();
+    } else {
+      property.reviews.push({
+        user: req.user._id,
+        rating,
+        comment,
+      });
+    }
+
+    property.numberOfReviews = property.reviews.length;
+    property.averageRating =
+      property.reviews.reduce((sum, review) => sum + review.rating, 0) /
+      property.numberOfReviews;
+
+    await property.save();
+
+    res.json(property);
+  } catch (error) {
+    console.log("❌ RATING ERROR:", error);
     res.status(500).json({ message: error.message });
   }
 };

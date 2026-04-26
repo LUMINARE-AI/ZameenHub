@@ -24,6 +24,15 @@ export default function AddProperty() {
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [carpetArea, setCarpetArea] = useState("");
+  const [configuration, setConfiguration] = useState("2BHK");
+  const [floorNumber, setFloorNumber] = useState("");
+  const [totalFloors, setTotalFloors] = useState("");
+  const [facing, setFacing] = useState("");
+  const [overlooking, setOverlooking] = useState("");
+  const [propertyAge, setPropertyAge] = useState("");
+  const [pricePerSqFt, setPricePerSqFt] = useState("");
+  const [highlights, setHighlights] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -103,6 +112,15 @@ export default function AddProperty() {
       formData.append("price", Number(price));
       formData.append("location", location.trim());
       formData.append("description", description.trim());
+      formData.append("carpetArea", carpetArea ? Number(carpetArea) : "");
+      formData.append("configuration", configuration);
+      formData.append("floorNumber", floorNumber ? Number(floorNumber) : "");
+      formData.append("totalFloors", totalFloors ? Number(totalFloors) : "");
+      formData.append("facing", facing);
+      formData.append("overlooking", overlooking);
+      formData.append("propertyAge", propertyAge);
+      formData.append("pricePerSqFt", pricePerSqFt ? Number(pricePerSqFt) : "");
+      formData.append("highlights", highlights);
       if (image) {
         formData.append("image", image);
       }
@@ -248,6 +266,110 @@ export default function AddProperty() {
               <p className="mt-1 text-xs text-slate-400">
                 {description.length} characters
               </p>
+            </div>
+
+            <div className="rounded-[32px] border border-slate-200 bg-slate-50 p-6">
+              <p className="text-sm font-semibold text-slate-900">Listing details</p>
+              <div className="mt-4 space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Carpet area (sq.ft)</label>
+                    <Input
+                      type="number"
+                      placeholder="e.g., 1200"
+                      value={carpetArea}
+                      onChange={(e) => setCarpetArea(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Configuration</label>
+                    <Input
+                      placeholder="e.g., 2BHK"
+                      value={configuration}
+                      onChange={(e) => setConfiguration(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Floor number</label>
+                    <Input
+                      type="number"
+                      placeholder="e.g., 2"
+                      value={floorNumber}
+                      onChange={(e) => setFloorNumber(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Total floors</label>
+                    <Input
+                      type="number"
+                      placeholder="e.g., 5"
+                      value={totalFloors}
+                      onChange={(e) => setTotalFloors(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Facing</label>
+                    <Input
+                      placeholder="East, West, North"
+                      value={facing}
+                      onChange={(e) => setFacing(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Overlooking</label>
+                    <Input
+                      placeholder="Road, Park, Garden"
+                      value={overlooking}
+                      onChange={(e) => setOverlooking(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Property age</label>
+                    <Input
+                      placeholder="e.g., 5 years"
+                      value={propertyAge}
+                      onChange={(e) => setPropertyAge(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700">Price per sq.ft</label>
+                    <Input
+                      type="number"
+                      placeholder="Optional"
+                      value={pricePerSqFt}
+                      onChange={(e) => setPricePerSqFt(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Highlights</label>
+                  <textarea
+                    rows="3"
+                    placeholder="Add 3-4 selling highlights separated by commas"
+                    value={highlights}
+                    onChange={(e) => setHighlights(e.target.value)}
+                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

@@ -4,6 +4,7 @@ import {
   getProperties,
   updateProperty,
   deleteProperty,
+  rateProperty,
 } from "../controllers/property.controller.js";
 
 import protect from "../middlewares/auth.middleware.js";
@@ -13,6 +14,7 @@ const router = express.Router();
 
 router.post("/", protect, upload.single("image"), addProperty);
 router.get("/", getProperties);
+router.post("/:id/rate", protect, rateProperty);
 router.put("/:id", protect, updateProperty);
 router.delete("/:id", protect, deleteProperty);
 

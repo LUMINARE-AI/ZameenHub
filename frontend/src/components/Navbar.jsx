@@ -8,6 +8,20 @@ import {
 } from "../utils/auth";
 import Button from "./ui/Button";
 
+const buyerItems = [
+  { label: "Plots", to: "/buy-plots" },
+  { label: "Commercial Land", to: "/listings?category=Commercial+Land" },
+  { label: "Agricultural Land", to: "/listings?category=Agricultural+Land" },
+  { label: "Flats", to: "/listings?category=Flats" },
+  { label: "Shops", to: "/listings?category=Shops" },
+];
+
+const tenantItems = [
+  { label: "Shops", to: "/listings?category=Shops" },
+  { label: "PG", to: "/listings?category=PG" },
+  { label: "Flat / Home", to: "/listings?category=Flats+%2F+Homes" },
+];
+
 export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -27,14 +41,6 @@ export default function Navbar() {
     []
   );
 
-  const navItems = [
-    { label: "Home", to: "/" },
-    { label: "For Buyers", to: "/buy-plots" },
-    { label: "For Sellers", to: "/add" },
-    ...(session.loggedIn ? [{ label: "Dashboard", to: "/dashboard" }] : []),
-    ...(session.user?.role === "admin" ? [{ label: "Admin", to: "/admin" }] : []),
-  ];
-
   function handleLogout() {
     clearSession();
     setOpen(false);
@@ -49,33 +55,107 @@ export default function Navbar() {
             ZH
           </div>
           <div>
-            <p className="text-base font-semibold text-slate-900">ZameenHub</p>
+            <p className="text-base font-semibold text-slate-950">ZameenHub</p>
             <p className="text-xs text-slate-500">Real Estate Marketplace</p>
           </div>
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
-          {navItems.map((item) => (
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${
+                isActive
+                  ? "text-slate-950 underline underline-offset-4 decoration-2 decoration-blue-600"
+                  : "text-slate-500 hover:text-slate-900"
+              }`
+            }
+          >
+            Home
+          </NavLink>
+
+          <div className="group relative">
+            <button className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-950">
+              For Buyers <span className="text-blue-500">▾</span>
+            </button>
+            <div className="pointer-events-none absolute left-0 top-full z-30 mt-3 hidden min-w-[220px] rounded-[28px] border border-slate-200 bg-white p-3 shadow-xl transition duration-200 group-hover:block group-hover:pointer-events-auto">
+              {buyerItems.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="group relative">
+            <button className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-950">
+              For Tenants <span className="text-blue-500">▾</span>
+            </button>
+            <div className="pointer-events-none absolute left-0 top-full z-30 mt-3 hidden min-w-[220px] rounded-[28px] border border-slate-200 bg-white p-3 shadow-xl transition duration-200 group-hover:block group-hover:pointer-events-auto">
+              {tenantItems.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <NavLink
+            to="/add"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${
+                isActive
+                  ? "text-slate-950 underline underline-offset-4 decoration-2 decoration-blue-600"
+                  : "text-slate-500 hover:text-slate-900"
+              }`
+            }
+          >
+            Sell Property
+          </NavLink>
+
+          {session.loggedIn && (
             <NavLink
-              key={item.label}
-              to={item.to}
+              to="/dashboard"
               className={({ isActive }) =>
                 `text-sm font-medium transition ${
-                  isActive ? "text-slate-950 underline underline-offset-4 decoration-2 decoration-blue-600" : "text-slate-500 hover:text-slate-900"
+                  isActive
+                    ? "text-slate-950 underline underline-offset-4 decoration-2 decoration-blue-600"
+                    : "text-slate-500 hover:text-slate-900"
                 }`
               }
             >
-              {item.label}
+              Dashboard
             </NavLink>
-          ))}
+          )}
+
+          {session.user?.role === "admin" && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `text-sm font-medium transition ${
+                  isActive
+                    ? "text-slate-950 underline underline-offset-4 decoration-2 decoration-blue-600"
+                    : "text-slate-500 hover:text-slate-900"
+                }`
+              }
+            >
+              Admin
+            </NavLink>
+          )}
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
           {session.loggedIn ? (
             <>
-              <span className="text-sm text-slate-500">
-                {session.user?.name || "Signed in"}
-              </span>
+              <span className="text-sm text-slate-500">{session.user?.name || "Signed in"}</span>
               <Button variant="ghost" className="px-4 py-2.5" onClick={handleLogout}>
                 Logout
               </Button>
@@ -114,22 +194,50 @@ export default function Navbar() {
       {open ? (
         <div className="mx-auto mt-3 max-w-[1440px] rounded-[28px] border border-white/70 bg-white/95 p-4 shadow-xl backdrop-blur-xl md:hidden">
           <div className="flex flex-col gap-3">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.label}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  `rounded-2xl px-4 py-3 text-sm font-medium transition ${
-                    isActive
-                      ? "bg-blue-50 text-blue-700 underline underline-offset-4 decoration-2 decoration-blue-600"
-                      : "text-slate-700 hover:bg-slate-100 hover:text-slate-950"
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
+            <Link
+              to="/"
+              onClick={() => setOpen(false)}
+              className="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100"
+            >
+              Home
+            </Link>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-sm font-semibold text-slate-800">For Buyers</p>
+              <div className="mt-3 space-y-2">
+                {buyerItems.map((item) => (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-white"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-sm font-semibold text-slate-800">For Tenants</p>
+              <div className="mt-3 space-y-2">
+                {tenantItems.map((item) => (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-white"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <Link
+              to="/add"
+              onClick={() => setOpen(false)}
+              className="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100"
+            >
+              Sell Property
+            </Link>
             {session.loggedIn ? (
               <Button variant="ghost" className="w-full" onClick={handleLogout}>
                 Logout

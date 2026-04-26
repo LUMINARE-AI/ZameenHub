@@ -34,14 +34,17 @@ export function formatArea(area) {
 
 export function normalizeProperty(property, index = 0) {
   const numericPrice = Number(property.price) || 0;
-  const numericBedrooms = Number(property.bedrooms || property.bhk) || 3;
+  const numericBedrooms = Number(property.bedrooms || property.bhk || property.configuration?.match(/\d+/)?.[0]) || 3;
   const numericBathrooms = Number(property.bathrooms) || Math.max(2, numericBedrooms - 1);
-  const numericArea = Number(property.area) || 1600 + index * 180;
+  const numericArea = Number(property.area || property.carpetArea) || 1600 + index * 180;
   const location = property.location || property.city || "Prime location";
   const primaryImage =
     property.image ||
     property.images?.[0] ||
     "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80";
+
+  const averageRating = Number(property.averageRating) || 0;
+  const reviews = Array.isArray(property.reviews) ? property.reviews : [];
 
   return {
     ...property,
@@ -68,6 +71,28 @@ export function normalizeProperty(property, index = 0) {
     status: property.status || "approved",
     featured: Boolean(property.featured),
     createdAt: property.createdAt || new Date().toISOString(),
+    carpetArea: property.carpetArea || undefined,
+    configuration: property.configuration || "2BHK",
+    floorNumber: property.floorNumber || undefined,
+    totalFloors: property.totalFloors || undefined,
+    facing: property.facing || "East",
+    overlooking: property.overlooking || "Road",
+    propertyAge: property.propertyAge || "New",
+    pricePerSqFt:
+      Number(property.pricePerSqFt) ||
+      (numericArea ? Math.round(numericPrice / numericArea) : undefined),
+    highlights:
+      property.highlights?.length > 0
+        ? property.highlights
+        : [
+            `Prime location in ${location}`,
+            "Strong investment potential",
+            "Easy connectivity to local transport",
+            "Verified property and seller details",
+          ],
+    averageRating,
+    numberOfReviews: Number(property.numberOfReviews) || reviews.length,
+    reviews,
   };
 }
 
