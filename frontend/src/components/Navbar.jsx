@@ -29,8 +29,8 @@ export default function Navbar() {
 
   const navItems = [
     { label: "Home", to: "/" },
-    { label: "Buy", to: "/buy-plots" },
-    { label: "Sell", to: "/add" },
+    { label: "For Buyers", to: "/buy-plots" },
+    { label: "For Sellers", to: "/add" },
     ...(session.loggedIn ? [{ label: "Dashboard", to: "/dashboard" }] : []),
     ...(session.user?.role === "admin" ? [{ label: "Admin", to: "/admin" }] : []),
   ];
