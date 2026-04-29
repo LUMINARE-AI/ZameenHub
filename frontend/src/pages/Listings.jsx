@@ -76,28 +76,28 @@ export default function Listings({ defaultCategory = "" }) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-      <aside className="h-fit rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)] lg:sticky lg:top-28">
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Filters</p>
-            <h1 className="mt-3 text-2xl font-semibold text-slate-950">Find land and plots</h1>
+    <div className="grid gap-4 lg:grid-cols-[270px_1fr]">
+      <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-24">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Filters</p>
+        <h1 className="mt-1 text-xl font-extrabold text-slate-950">Find land and plots</h1>
 
-        <div className="mt-6 space-y-5">
+        <div className="mt-4 space-y-4">
           <div>
-            <label className="text-sm font-medium text-slate-600">Location</label>
+            <label className="text-xs font-bold text-slate-600">Location</label>
             <input
               value={filters.location}
               onChange={(event) => updateFilter("location", event.target.value)}
               placeholder="City or locality"
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-600">Category</label>
+            <label className="text-xs font-bold text-slate-600">Category</label>
             <select
               value={categorySelectValue}
               onChange={(event) => updateFilter("category", event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
               <option value="">All categories</option>
               {PROPERTY_CATEGORIES.map((category) => (
@@ -109,8 +109,8 @@ export default function Listings({ defaultCategory = "" }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-600">
-              Max price: ₹{Math.round(filters.maxPrice / 10000000)} Cr
+            <label className="text-xs font-bold text-slate-600">
+              Max price: INR {Math.round(filters.maxPrice / 10000000)} Cr
             </label>
             <input
               type="range"
@@ -119,19 +119,19 @@ export default function Listings({ defaultCategory = "" }) {
               step="500000"
               value={filters.maxPrice}
               onChange={(event) => updateFilter("maxPrice", Number(event.target.value))}
-              className="mt-3 w-full accent-blue-600"
+              className="mt-2 w-full accent-blue-600"
             />
           </div>
 
-          <div className="rounded-3xl bg-blue-50 p-4">
-            <p className="text-sm font-bold text-blue-900">Popular buy categories</p>
-            <div className="mt-3 flex flex-wrap gap-2">
+          <div className="rounded-xl bg-blue-50 p-3">
+            <p className="text-xs font-bold uppercase text-blue-900">Popular buy categories</p>
+            <div className="mt-2 flex flex-wrap gap-2">
               {BUY_CATEGORIES.map((category) => (
                 <button
                   key={category}
                   type="button"
                   onClick={() => updateFilter("category", category)}
-                  className="rounded-full bg-white px-3 py-2 text-xs font-semibold text-slate-700 ring-1 ring-blue-100"
+                  className="min-h-9 rounded-full bg-white px-3 text-xs font-bold text-slate-700 ring-1 ring-blue-100"
                 >
                   {category}
                 </button>
@@ -141,24 +141,24 @@ export default function Listings({ defaultCategory = "" }) {
         </div>
       </aside>
 
-      <section className="space-y-6">
-        <div className="flex flex-col gap-4 rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)] sm:flex-row sm:items-end sm:justify-between">
+      <section className="space-y-4">
+        <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Marketplace</p>
-            <h2 className="mt-2 text-3xl font-semibold text-slate-950">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Marketplace</p>
+            <h2 className="mt-1 text-xl font-extrabold text-slate-950 sm:text-2xl">
               Approved plots, land and spaces
             </h2>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500">
               {loading ? "Loading listings..." : `${filteredProperties.length} backend listings found`}
             </p>
           </div>
 
-          <div>
-            <label className="text-sm font-medium text-slate-600">Sort by</label>
+          <div className="sm:min-w-48">
+            <label className="text-xs font-bold text-slate-600">Sort by</label>
             <select
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
               <option value="newest">Newest</option>
               <option value="price-asc">Price: Low to high</option>
@@ -170,14 +170,14 @@ export default function Listings({ defaultCategory = "" }) {
         {error ? <StatusBanner tone="error" message={error} /> : null}
         <StatusBanner tone={status.tone} message={status.message} />
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {loading
-            ? Array.from({ length: 6 }).map((_, index) => <PropertySkeleton key={index} />)
+            ? Array.from({ length: 10 }).map((_, index) => <PropertySkeleton key={index} />)
             : filteredProperties.map((property, index) => (
                 <PropertyCard
                   key={property._id}
                   property={property}
-                  priority={index < 2}
+                  priority={index < 3}
                   canDelete={canDeleteProperty(user, property)}
                   deleting={deletingId === property._id}
                   onDelete={handleDeleteProperty}
@@ -186,8 +186,8 @@ export default function Listings({ defaultCategory = "" }) {
         </div>
 
         {!loading && filteredProperties.length === 0 ? (
-          <div className="rounded-[32px] border border-dashed border-slate-300 bg-white/70 px-6 py-12 text-center">
-            <p className="text-xl font-semibold text-slate-900">No properties found</p>
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
+            <p className="text-lg font-bold text-slate-900">No properties found</p>
             <p className="mt-2 text-sm text-slate-500">
               Try widening the budget or changing the property type.
             </p>

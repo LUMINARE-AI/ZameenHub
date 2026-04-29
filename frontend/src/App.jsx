@@ -19,7 +19,7 @@ function AppLayout() {
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(circle,_rgba(14,165,233,0.14),_transparent_55%)]" />
         <BrowserRouter>
           <Navbar />
-          <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[1440px] flex-col px-4 pb-10 pt-6 sm:px-6 lg:px-8">
+          <main className="mx-auto flex min-h-[calc(100vh-72px)] w-full max-w-[1440px] flex-col px-3 pb-6 pt-4 sm:px-4 lg:px-6">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/buy-plots" element={<Listings defaultCategory="plots" />} />

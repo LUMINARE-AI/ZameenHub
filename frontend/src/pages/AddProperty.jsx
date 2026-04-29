@@ -157,12 +157,12 @@ export default function AddProperty() {
   }
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)]">
-        <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">
+    <div className="space-y-4">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">
           List your plot or property
         </p>
-        <h1 className="mt-3 text-3xl font-semibold text-slate-950">
+        <h1 className="mt-1 text-xl font-extrabold text-slate-950 sm:text-2xl">
           Sell land, plots and commercial spaces on ZameenHub
         </h1>
         <p className="mt-2 text-sm text-slate-500">
@@ -172,10 +172,10 @@ export default function AddProperty() {
 
       <StatusBanner tone={status.tone} message={status.message} />
 
-      <section className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)]">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="grid gap-4 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_420px]">
           {/* Form Fields */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Title */}
             <div>
               <label className="text-sm font-semibold text-slate-700">
@@ -200,7 +200,7 @@ export default function AddProperty() {
               <select
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
-                className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               >
                 {PROPERTY_CATEGORIES.map((item) => (
                   <option key={item} value={item}>
@@ -257,8 +257,8 @@ export default function AddProperty() {
                   setDescription(e.target.value);
                   if (errors.description) setErrors({ ...errors, description: "" });
                 }}
-                rows="5"
-                className={`w-full rounded-2xl border bg-white px-4 py-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 ${
+                rows="4"
+                className={`w-full rounded-xl border bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
                   errors.description ? "border-rose-500 focus:ring-rose-100 focus:border-rose-500" : "border-slate-200"
                 }`}
               />
@@ -268,10 +268,10 @@ export default function AddProperty() {
               </p>
             </div>
 
-            <div className="rounded-[32px] border border-slate-200 bg-slate-50 p-6">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="text-sm font-semibold text-slate-900">Listing details</p>
-              <div className="mt-4 space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
+              <div className="mt-3 space-y-3">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-medium text-slate-700">Carpet area (sq.ft)</label>
                     <Input
@@ -293,7 +293,7 @@ export default function AddProperty() {
                   </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-medium text-slate-700">Floor number</label>
                     <Input
@@ -316,7 +316,7 @@ export default function AddProperty() {
                   </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-medium text-slate-700">Facing</label>
                     <Input
@@ -337,7 +337,7 @@ export default function AddProperty() {
                   </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-medium text-slate-700">Property age</label>
                     <Input
@@ -362,11 +362,11 @@ export default function AddProperty() {
                 <div>
                   <label className="text-sm font-medium text-slate-700">Highlights</label>
                   <textarea
-                    rows="3"
+                    rows="2"
                     placeholder="Add 3-4 selling highlights separated by commas"
                     value={highlights}
                     onChange={(e) => setHighlights(e.target.value)}
-                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                    className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   />
                 </div>
               </div>
@@ -374,13 +374,13 @@ export default function AddProperty() {
           </div>
 
           {/* Image Upload */}
-          <div className="space-y-6 flex flex-col">
+          <div className="space-y-4 flex flex-col">
             <div>
               <label className="text-sm font-semibold text-slate-700">
                 Plot / Property Image <span className="text-rose-500">*</span>
               </label>
               <div
-                className={`mt-3 rounded-2xl border-2 border-dashed transition cursor-pointer flex items-center justify-center min-h-[320px] overflow-hidden ${
+                className={`mt-2 rounded-2xl border-2 border-dashed transition cursor-pointer flex items-center justify-center min-h-[220px] overflow-hidden lg:min-h-[300px] ${
                   errors.image
                     ? "border-rose-500 bg-rose-50"
                     : imagePreview
@@ -422,7 +422,7 @@ export default function AddProperty() {
         </div>
 
         {/* Submit Button */}
-        <div className="mt-8 flex gap-3 justify-end">
+        <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
@@ -444,9 +444,9 @@ export default function AddProperty() {
       </section>
 
       {/* Info Cards */}
-      <section className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)]">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">
+      <section className="grid gap-4 md:grid-cols-2">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">
             Before you list
           </p>
           <ul className="mt-4 space-y-3 text-sm text-slate-600">
@@ -465,8 +465,8 @@ export default function AddProperty() {
           </ul>
         </div>
 
-        <div className="rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)]">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">
             Listing gets more visibility when
           </p>
           <ul className="mt-4 space-y-3 text-sm text-slate-600">

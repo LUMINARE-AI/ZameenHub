@@ -3,27 +3,26 @@ import { useNavigate } from "react-router-dom";
 import PropertyCard from "../components/PropertyCard";
 import PropertySkeleton from "../components/PropertySkeleton";
 import FAQAccordion from "../components/FAQAccordion";
-import RatingStars from "../components/RatingStars";
 import useProperties from "../hooks/useProperties";
 
 const heroSlides = [
   {
     image:
       "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
-    title: "Discover premium plots, land and verified spaces",
-    description: "Fast search, professional listings and trusted seller contact for your next investment.",
+    title: "Find plots, land and shops faster",
+    description: "Verified listings with clear pricing, location and seller contact.",
   },
   {
     image:
       "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1400&q=80",
-    title: "High-value properties for buyers and investors",
-    description: "Explore featured properties with clear pricing, ratings and seller details.",
+    title: "Compare compact property options",
+    description: "Browse high-value properties without noisy cards or wasted space.",
   },
   {
     image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
-    title: "List your property with a professional seller form",
-    description: "Sell your plot, shop or flat with high quality detail fields and fast approvals.",
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1400&q=80",
+    title: "Post property with buyer-ready details",
+    description: "List plots, shops and flats with quick approval workflows.",
   },
 ];
 
@@ -41,28 +40,30 @@ const faqItems = [
   {
     question: "Is this platform verified?",
     answer:
-      "ZameenHub reviews each listing before approval, and our verified listings include seller details and property ratings.",
+      "ZameenHub reviews each listing before approval, and verified listings include seller details and property ratings.",
   },
 ];
 
 const categories = [
-  { title: "Plots", color: "bg-sky-50 text-sky-700", query: "Plots" },
-  { title: "Commercial Land", color: "bg-amber-50 text-amber-700", query: "Commercial Land" },
-  { title: "Agricultural Land", color: "bg-emerald-50 text-emerald-700", query: "Agricultural Land" },
-  { title: "Shops", color: "bg-violet-50 text-violet-700", query: "Shops" },
+  { title: "Plots", color: "bg-blue-50 text-blue-700 ring-blue-100", query: "Plots" },
+  { title: "Commercial", color: "bg-amber-50 text-amber-700 ring-amber-100", query: "Commercial Land" },
+  { title: "Agricultural", color: "bg-emerald-50 text-emerald-700 ring-emerald-100", query: "Agricultural Land" },
+  { title: "Shops", color: "bg-violet-50 text-violet-700 ring-violet-100", query: "Shops" },
+  { title: "Flats", color: "bg-rose-50 text-rose-700 ring-rose-100", query: "Flats" },
 ];
 
 export default function Home() {
   const navigate = useNavigate();
-  const { properties, featuredProperties, loading, error } = useProperties();
+  const { properties, featuredProperties, loading } = useProperties();
   const [activeSlide, setActiveSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
   const [searchLocation, setSearchLocation] = useState("");
   const [searchCategory, setSearchCategory] = useState("Plots");
 
   useEffect(() => {
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % heroSlides.length);
-    }, 6500);
+    }, 5500);
 
     return () => window.clearInterval(timer);
   }, []);
@@ -72,11 +73,12 @@ export default function Home() {
     [properties]
   );
 
+  const featuredList = featuredProperties.length > 0 ? featuredProperties : sortedProperties;
   const recommendedProperties = useMemo(
     () =>
       properties
         .filter((property) => property.averageRating >= 4)
-        .slice(0, 6),
+        .slice(0, 10),
     [properties]
   );
 
@@ -89,7 +91,7 @@ export default function Home() {
 
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
+      .slice(0, 8)
       .map(([city, count]) => ({ city, count }));
   }, [properties]);
 
@@ -101,236 +103,203 @@ export default function Home() {
     navigate(`/listings?${params.toString()}`);
   }
 
-  return (
-    <div className="space-y-10">
-      <section className="overflow-hidden rounded-[36px] border border-white/70 bg-white/90 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.28)]">
-        <div className="relative">
-          <img
-            src={heroSlides[activeSlide].image}
-            alt={heroSlides[activeSlide].title}
-            className="h-[520px] w-full object-cover transition duration-700"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/20 to-transparent" />
-          <div className="absolute inset-y-0 left-0 flex w-full items-center px-6 sm:px-10 lg:px-16">
-            <div className="max-w-2xl rounded-[32px] bg-white/90 px-8 py-10 shadow-2xl backdrop-blur-xl sm:px-10">
-              <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Find your best deal</p>
-              <h1 className="mt-4 text-4xl font-semibold text-slate-950 sm:text-5xl">
-                {heroSlides[activeSlide].title}
-              </h1>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
-                {heroSlides[activeSlide].description}
-              </p>
+  function handleTouchEnd(event) {
+    const distance = touchStart - event.changedTouches[0].clientX;
+    if (Math.abs(distance) < 40) return;
+    setActiveSlide((current) =>
+      distance > 0
+        ? (current + 1) % heroSlides.length
+        : (current - 1 + heroSlides.length) % heroSlides.length
+    );
+  }
 
-              <form onSubmit={handleSearch} className="mt-8 grid gap-4 sm:grid-cols-[1.5fr_1fr]">
-                <input
-                  value={searchLocation}
-                  onChange={(event) => setSearchLocation(event.target.value)}
-                  placeholder="Search city or locality"
-                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-                />
-                <select
-                  value={searchCategory}
-                  onChange={(event) => setSearchCategory(event.target.value)}
-                  className="w-full rounded-3xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-                >
-                  {heroSlides.map((_, index) => null)}
-                  <option value="Plots">Plots</option>
-                  <option value="Commercial Land">Commercial Land</option>
-                  <option value="Agricultural Land">Agricultural Land</option>
-                  <option value="Flats">Flats</option>
-                  <option value="Shops">Shops</option>
-                </select>
+  return (
+    <div className="space-y-5 sm:space-y-6">
+      <section
+        className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 shadow-sm"
+        onTouchStart={(event) => setTouchStart(event.touches[0].clientX)}
+        onTouchEnd={handleTouchEnd}
+      >
+        <img
+          src={heroSlides[activeSlide].image}
+          alt={heroSlides[activeSlide].title}
+          className="h-[310px] w-full object-cover opacity-70 sm:h-[340px] lg:h-[360px]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-slate-950/10" />
+        <div className="absolute inset-0 flex items-center px-4 py-4 sm:px-6 lg:px-8">
+          <div className="w-full max-w-3xl">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-200">ZameenHub marketplace</p>
+            <h1 className="mt-2 max-w-2xl text-2xl font-extrabold leading-tight text-white sm:text-4xl">
+              {heroSlides[activeSlide].title}
+            </h1>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-200">
+              {heroSlides[activeSlide].description}
+            </p>
+
+            <form
+              onSubmit={handleSearch}
+              className="mt-4 grid gap-2 rounded-2xl bg-white/95 p-2 shadow-lg sm:grid-cols-[1.5fr_1fr_auto]"
+            >
+              <input
+                value={searchLocation}
+                onChange={(event) => setSearchLocation(event.target.value)}
+                placeholder="City or locality"
+                className="min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+              <select
+                value={searchCategory}
+                onChange={(event) => setSearchCategory(event.target.value)}
+                className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              >
+                {categories.map((item) => (
+                  <option key={item.query} value={item.query}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                className="min-h-11 rounded-xl bg-blue-600 px-5 text-sm font-bold text-white transition hover:bg-blue-700"
+              >
+                Search
+              </button>
+            </form>
+
+            <div className="mt-3 flex gap-2">
+              {heroSlides.map((slide, index) => (
                 <button
-                  type="submit"
-                  className="rounded-3xl bg-blue-600 px-8 py-4 text-sm font-semibold text-white transition hover:bg-blue-700"
-                >
-                  Search Listings
-                </button>
-              </form>
+                  key={slide.title}
+                  type="button"
+                  onClick={() => setActiveSlide(index)}
+                  className={`h-2.5 rounded-full transition ${
+                    index === activeSlide ? "w-8 bg-white" : "w-2.5 bg-white/50"
+                  }`}
+                  aria-label={`Show slide ${index + 1}`}
+                />
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {categories.map((item) => (
+          <button
+            key={item.title}
+            type="button"
+            onClick={() => navigate(`/listings?category=${encodeURIComponent(item.query)}`)}
+            className={`rounded-xl px-4 py-3 text-left text-sm font-bold ring-1 transition hover:-translate-y-0.5 hover:shadow-sm ${item.color}`}
+          >
+            {item.title}
+            <span className="mt-1 block text-xs font-medium opacity-75">Browse listings</span>
+          </button>
+        ))}
+      </section>
+
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Featured Collections</p>
-            <h2 className="mt-2 text-3xl font-semibold text-slate-950">Featured Properties</h2>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Featured</p>
+            <h2 className="text-xl font-extrabold text-slate-950 sm:text-2xl">Top properties near you</h2>
           </div>
-          <div className="text-sm text-slate-500">
-            Hand-picked listings with high ratings and strong seller interest.
+          <button
+            type="button"
+            onClick={() => navigate("/listings")}
+            className="min-h-10 rounded-full bg-slate-900 px-4 text-xs font-bold text-white transition hover:bg-slate-800"
+          >
+            View all
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          {loading
+            ? Array.from({ length: 10 }).map((_, index) => <PropertySkeleton key={index} />)
+            : featuredList.slice(0, 10).map((property, index) => (
+                <PropertyCard key={property._id} property={property} priority={index < 3} />
+              ))}
+        </div>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Recommended</p>
+              <h2 className="text-xl font-extrabold text-slate-950">Buyer favorites</h2>
+            </div>
+          </div>
+          <div className="mt-3 grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 xl:grid-cols-3">
+            {loading
+              ? Array.from({ length: 6 }).map((_, index) => <PropertySkeleton key={index} />)
+              : (recommendedProperties.length > 0 ? recommendedProperties : sortedProperties)
+                  .slice(0, 6)
+                  .map((property) => <PropertyCard key={property._id} property={property} />)}
           </div>
         </div>
 
-        {loading ? (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <PropertySkeleton key={index} />
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {(featuredProperties.length > 0 ? featuredProperties : sortedProperties.slice(0, 3)).map((property) => (
-              <PropertyCard key={property._id} property={property} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-6">
-          <div className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.28)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Recommended</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Properties our buyers love</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-500">
-              Popular listings with high ratings, strong value and quick seller response.
-            </p>
-            <div className="mt-6 grid gap-5 sm:grid-cols-2">
-              {loading
-                ? Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} className="h-52 animate-pulse rounded-[28px] bg-slate-200" />
+        <aside className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Popular locations</p>
+            <div className="mt-3 grid gap-2">
+              {popularLocations.length > 0
+                ? popularLocations.map((location) => (
+                    <button
+                      key={location.city}
+                      type="button"
+                      onClick={() => navigate(`/listings?location=${encodeURIComponent(location.city)}`)}
+                      className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-left text-sm transition hover:bg-blue-50"
+                    >
+                      <span className="font-bold text-slate-900">{location.city}</span>
+                      <span className="text-xs text-slate-500">{location.count} listings</span>
+                    </button>
                   ))
-                : (recommendedProperties.length > 0 ? recommendedProperties : sortedProperties.slice(0, 4)).map((property) => (
-                    <PropertyCard key={property._id} property={property} />
+                : Array.from({ length: 4 }).map((_, index) => (
+                    <div key={index} className="h-10 animate-pulse rounded-xl bg-slate-100" />
                   ))}
             </div>
           </div>
-        </div>
 
-        <aside className="space-y-6">
-          <div className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.28)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Why ZameenHub</p>
-            <h3 className="mt-3 text-2xl font-semibold text-slate-950">Trusted real estate discovery</h3>
-            <ul className="mt-6 space-y-4 text-sm text-slate-600">
-              <li className="flex gap-3"><span className="mt-1 text-blue-600">✔</span>Verified listings with seller info.</li>
-              <li className="flex gap-3"><span className="mt-1 text-blue-600">✔</span>Data-rich property insights and ratings.</li>
-              <li className="flex gap-3"><span className="mt-1 text-blue-600">✔</span>Dedicated support for buyers and sellers.</li>
-            </ul>
-          </div>
-
-          <div className="rounded-[36px] border border-white/70 bg-blue-950 p-8 text-white shadow-[0_24px_80px_-36px_rgba(15,23,42,0.28)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-sky-300">Start selling</p>
-            <h3 className="mt-3 text-2xl font-semibold">List your property today</h3>
-            <p className="mt-4 text-sm leading-7 text-slate-200">
-              Add detailed seller data, get high visibility and reach verified buyers fast.
+          <div className="rounded-2xl bg-slate-950 p-4 text-white shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-300">Sell faster</p>
+            <h3 className="mt-1 text-lg font-extrabold">Post your property today</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Add clear price, location, image and details for quicker buyer response.
             </p>
             <button
               type="button"
               onClick={() => navigate("/add")}
-              className="mt-6 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+              className="mt-3 min-h-10 rounded-full bg-white px-4 text-xs font-bold text-slate-950 transition hover:bg-slate-100"
             >
-              Post a property
+              Post property
             </button>
           </div>
         </aside>
       </section>
 
-      <section className="space-y-6">
-        <div className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.28)]">
-          <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Popular Locations</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {popularLocations.length > 0
-              ? popularLocations.map((location) => (
-                  <div key={location.city} className="rounded-[28px] bg-slate-50 p-5">
-                    <p className="text-lg font-semibold text-slate-950">{location.city}</p>
-                    <p className="mt-2 text-sm text-slate-500">{location.count} active listings</p>
-                  </div>
-                ))
-              : Array.from({ length: 3 }).map((_, index) => (
-                  <div key={index} className="h-24 animate-pulse rounded-[28px] bg-slate-200" />
-                ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.28)]">
-        <div className="grid gap-10 lg:grid-cols-[1fr_340px]">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">How it works</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-950">Simple, transparent property discovery</h2>
-            <div className="mt-8 grid gap-5 sm:grid-cols-2">
-              {[
-                { title: "Search in minutes", description: "Filter by location, category, budget and ratings." },
-                { title: "Review verified listings", description: "See seller details, ratings and clear descriptions." },
-                { title: "Contact seller directly", description: "Reach buyers with built-in contact actions." },
-                { title: "Make a confident purchase", description: "Choose from top locations and trusted deals." },
-              ].map((item) => (
-                <div key={item.title} className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-                  <p className="text-sm font-semibold text-slate-950">{item.title}</p>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="rounded-[28px] bg-slate-950 p-8 text-white">
-              <p className="text-sm uppercase tracking-[0.26em] text-sky-300">Testimonials</p>
-              <p className="mt-4 text-xl font-semibold">Trusted by thousands of buyers and sellers.</p>
-              <div className="mt-6 space-y-5 text-sm leading-7 text-slate-300">
-                <p>“ZameenHub helped me find the perfect plot with clear seller contact and verified details.”</p>
-                <p>“Our shop listing generated multiple inquiries within hours thanks to the detailed seller form.”</p>
+      <section className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">How it works</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              { title: "Search", description: "Filter by location, category and budget." },
+              { title: "Compare", description: "Check price, title, area and seller details." },
+              { title: "Contact", description: "Call or request details from the listing." },
+              { title: "Close", description: "Move ahead with verified property information." },
+            ].map((item) => (
+              <div key={item.title} className="rounded-xl bg-slate-50 p-3">
+                <p className="text-sm font-bold text-slate-950">{item.title}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-600">{item.description}</p>
               </div>
-            </div>
-            <div className="rounded-[28px] bg-blue-50 p-8">
-              <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Explore</p>
-              <div className="mt-5 grid gap-3">
-                {categories.map((item) => (
-                  <button
-                    key={item.title}
-                    type="button"
-                    onClick={() => navigate(`/listings?category=${encodeURIComponent(item.query)}`)}
-                    className={`rounded-3xl px-5 py-4 text-left text-sm font-semibold transition ${item.color} hover:opacity-90`}
-                  >
-                    {item.title}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div>
-          <div className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.28)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">FAQ</p>
-            <h3 className="mt-3 text-3xl font-semibold text-slate-950">Frequently asked questions</h3>
-            <div className="mt-6">
-              <FAQAccordion items={faqItems} />
-            </div>
+            ))}
           </div>
         </div>
 
-        <aside className="space-y-6">
-          <div className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.28)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-blue-600">Data-driven trust</p>
-            <div className="mt-4 space-y-4 text-sm text-slate-600">
-              <div className="flex items-center gap-3 rounded-3xl bg-slate-50 p-4">
-                <div className="rounded-2xl bg-blue-600 px-3 py-2 text-white">1</div>
-                <div>
-                  <p className="font-semibold text-slate-950">Verified sellers</p>
-                  <p>Every approved listing is reviewed before going live.</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-3xl bg-slate-50 p-4">
-                <div className="rounded-2xl bg-blue-600 px-3 py-2 text-white">2</div>
-                <div>
-                  <p className="font-semibold text-slate-950">Market insights</p>
-                  <p>View actual property ratings and nearby location benefits.</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-3xl bg-slate-50 p-4">
-                <div className="rounded-2xl bg-blue-600 px-3 py-2 text-white">3</div>
-                <div>
-                  <p className="font-semibold text-slate-950">Quick contact</p>
-                  <p>Call sellers directly or book viewings from a single page.</p>
-                </div>
-              </div>
-            </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">FAQ</p>
+          <div className="mt-3">
+            <FAQAccordion items={faqItems} />
           </div>
-        </aside>
+        </div>
       </section>
     </div>
   );

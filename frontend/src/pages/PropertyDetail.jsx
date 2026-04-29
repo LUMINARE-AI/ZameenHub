@@ -4,7 +4,7 @@ import Button from "../components/ui/Button";
 import Toast from "../components/ui/Toast";
 import RatingStars from "../components/RatingStars";
 import useProperties from "../hooks/useProperties";
-import { formatArea, formatPrice } from "../utils/property";
+import { formatPrice } from "../utils/property";
 import { getStoredUser } from "../utils/auth";
 import API from "../services/api";
 
@@ -66,7 +66,6 @@ export default function PropertyDetail() {
   }
 
   const isAdmin = user?.role === "admin";
-  const isOwner = property.owner?._id === user?._id;
 
   const highlightItems = property.highlights?.length
     ? property.highlights

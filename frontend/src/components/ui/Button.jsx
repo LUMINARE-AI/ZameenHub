@@ -16,7 +16,7 @@ export default function Button({
 
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition duration-200 ${variants[variant]} ${className}`}
+      className={`inline-flex min-h-10 items-center justify-center rounded-full px-4 py-2.5 text-sm font-bold transition duration-200 ${variants[variant]} ${className}`}
       {...props}
     >
       {children}
