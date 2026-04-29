@@ -276,28 +276,116 @@ export default function Home() {
         </aside>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1fr_320px]">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">How it works</p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">How it works</p>
+              <h2 className="mt-1 text-xl font-extrabold text-slate-950">Simple property discovery</h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate("/listings")}
+              className="min-h-10 rounded-full bg-blue-50 px-4 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
+            >
+              Browse listings
+            </button>
+          </div>
+
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {[
-              { title: "Search", description: "Filter by location, category and budget." },
-              { title: "Compare", description: "Check price, title, area and seller details." },
-              { title: "Contact", description: "Call or request details from the listing." },
-              { title: "Close", description: "Move ahead with verified property information." },
+              { icon: "01", title: "Search", description: "Filter by location, category and budget." },
+              { icon: "02", title: "Compare", description: "Check price, title, area and seller details." },
+              { icon: "03", title: "Contact", description: "Call or request details from the listing." },
+              { icon: "04", title: "Close", description: "Move ahead with verified property information." },
             ].map((item) => (
-              <div key={item.title} className="rounded-xl bg-slate-50 p-3">
-                <p className="text-sm font-bold text-slate-950">{item.title}</p>
-                <p className="mt-1 text-xs leading-5 text-slate-600">{item.description}</p>
+              <div key={item.title} className="flex gap-3 rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-extrabold text-blue-700 shadow-sm">
+                  {item.icon}
+                </span>
+                <div>
+                  <p className="text-sm font-bold text-slate-950">{item.title}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">{item.description}</p>
+                </div>
               </div>
             ))}
           </div>
+
+          <div className="mt-4 grid flex-1 gap-3 xl:grid-cols-[1fr_280px]">
+            <div className="rounded-xl bg-slate-950 p-4 text-white">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-300">Why choose ZameenHub</p>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {[
+                  "Verified listings",
+                  "Direct seller contact",
+                  "No brokerage",
+                  "Fast search",
+                ].map((item) => (
+                  <div key={item} className="rounded-lg bg-white/10 px-3 py-2 text-xs font-bold">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Post your property</p>
+              <h3 className="mt-1 text-lg font-extrabold text-slate-950">Reach buyers faster</h3>
+              <p className="mt-2 text-xs leading-5 text-slate-600">
+                Add your property with price, location and photos for better visibility.
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate("/add")}
+                className="mt-3 min-h-10 rounded-full bg-blue-600 px-4 text-xs font-bold text-white transition hover:bg-blue-700"
+              >
+                Post property
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-sm font-extrabold text-slate-950">More active listings</p>
+              <span className="text-xs font-semibold text-slate-500">Compact view</span>
+            </div>
+            <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 xl:grid-cols-3">
+              {loading
+                ? Array.from({ length: 3 }).map((_, index) => <PropertySkeleton key={index} />)
+                : (recommendedProperties.length > 0 ? recommendedProperties : sortedProperties)
+                    .slice(0, 3)
+                    .map((property) => <PropertyCard key={property._id} property={property} />)}
+            </div>
+          </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">FAQ</p>
-          <div className="mt-3">
-            <FAQAccordion items={faqItems} />
+        <div className="flex h-full flex-col gap-4">
+          <div className="flex-1 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">FAQ</p>
+            <div className="mt-3">
+              <FAQAccordion items={faqItems} />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Popular locations</p>
+            <div className="mt-3 grid gap-2">
+              {popularLocations.length > 0
+                ? popularLocations.slice(0, 4).map((location) => (
+                    <button
+                      key={location.city}
+                      type="button"
+                      onClick={() => navigate(`/listings?location=${encodeURIComponent(location.city)}`)}
+                      className="flex min-h-10 items-center justify-between rounded-xl bg-slate-50 px-3 text-left text-sm transition hover:bg-blue-50"
+                    >
+                      <span className="font-bold text-slate-900">{location.city}</span>
+                      <span className="text-xs text-slate-500">{location.count}</span>
+                    </button>
+                  ))
+                : Array.from({ length: 4 }).map((_, index) => (
+                    <div key={index} className="h-10 animate-pulse rounded-xl bg-slate-100" />
+                  ))}
+            </div>
           </div>
         </div>
       </section>
