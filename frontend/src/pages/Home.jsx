@@ -45,11 +45,11 @@ const faqItems = [
 ];
 
 const categories = [
-  { title: "Plots", color: "bg-blue-50 text-blue-700 ring-blue-100", query: "Plots" },
-  { title: "Commercial", color: "bg-amber-50 text-amber-700 ring-amber-100", query: "Commercial Land" },
-  { title: "Agricultural", color: "bg-emerald-50 text-emerald-700 ring-emerald-100", query: "Agricultural Land" },
-  { title: "Shops", color: "bg-violet-50 text-violet-700 ring-violet-100", query: "Shops" },
-  { title: "Flats", color: "bg-rose-50 text-rose-700 ring-rose-100", query: "Flats" },
+  { title: "Plots", query: "Plots" },
+  { title: "Commercial", query: "Commercial Land" },
+  { title: "Agricultural", query: "Agricultural Land" },
+  { title: "Shops", query: "Shops" },
+  { title: "Flats", query: "Flats" },
 ];
 
 export default function Home() {
@@ -74,13 +74,6 @@ export default function Home() {
   );
 
   const featuredList = featuredProperties.length > 0 ? featuredProperties : sortedProperties;
-  const recommendedProperties = useMemo(
-    () =>
-      properties
-        .filter((property) => property.averageRating >= 4)
-        .slice(0, 10),
-    [properties]
-  );
 
   const popularLocations = useMemo(() => {
     const counts = properties.reduce((acc, property) => {
@@ -114,42 +107,42 @@ export default function Home() {
   }
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div className="space-y-4 sm:space-y-5">
       <section
-        className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 shadow-sm"
+        className="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-950 shadow-sm"
         onTouchStart={(event) => setTouchStart(event.touches[0].clientX)}
         onTouchEnd={handleTouchEnd}
       >
         <img
           src={heroSlides[activeSlide].image}
           alt={heroSlides[activeSlide].title}
-          className="h-[310px] w-full object-cover opacity-70 sm:h-[340px] lg:h-[360px]"
+          className="h-[260px] w-full object-cover opacity-70 sm:h-[280px] lg:h-[300px]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-slate-950/10" />
-        <div className="absolute inset-0 flex items-center px-4 py-4 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 flex items-center px-4 py-3 sm:px-5 lg:px-7">
           <div className="w-full max-w-3xl">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-200">ZameenHub marketplace</p>
-            <h1 className="mt-2 max-w-2xl text-2xl font-extrabold leading-tight text-white sm:text-4xl">
+            <h1 className="mt-1 max-w-2xl text-2xl font-extrabold leading-tight text-white sm:text-4xl">
               {heroSlides[activeSlide].title}
             </h1>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-200">
+            <p className="mt-2 max-w-xl text-sm leading-5 text-slate-200">
               {heroSlides[activeSlide].description}
             </p>
 
             <form
               onSubmit={handleSearch}
-              className="mt-4 grid gap-2 rounded-2xl bg-white/95 p-2 shadow-lg sm:grid-cols-[1.5fr_1fr_auto]"
+              className="mt-4 grid gap-2 rounded-xl bg-white/95 p-2 shadow-lg sm:grid-cols-[1.5fr_1fr_auto]"
             >
               <input
                 value={searchLocation}
                 onChange={(event) => setSearchLocation(event.target.value)}
                 placeholder="City or locality"
-                className="min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="min-h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
               <select
                 value={searchCategory}
                 onChange={(event) => setSearchCategory(event.target.value)}
-                className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="min-h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               >
                 {categories.map((item) => (
                   <option key={item.query} value={item.query}>
@@ -159,7 +152,7 @@ export default function Home() {
               </select>
               <button
                 type="submit"
-                className="min-h-11 rounded-xl bg-blue-600 px-5 text-sm font-bold text-white transition hover:bg-blue-700"
+                className="min-h-10 rounded-lg bg-blue-600 px-5 text-sm font-bold text-white transition hover:bg-blue-700"
               >
                 Search
               </button>
@@ -182,36 +175,22 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {categories.map((item) => (
-          <button
-            key={item.title}
-            type="button"
-            onClick={() => navigate(`/listings?category=${encodeURIComponent(item.query)}`)}
-            className={`rounded-xl px-4 py-3 text-left text-sm font-bold ring-1 transition hover:-translate-y-0.5 hover:shadow-sm ${item.color}`}
-          >
-            {item.title}
-            <span className="mt-1 block text-xs font-medium opacity-75">Browse listings</span>
-          </button>
-        ))}
-      </section>
-
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Featured</p>
-            <h2 className="text-xl font-extrabold text-slate-950 sm:text-2xl">Top properties near you</h2>
+            <h2 className="text-xl font-extrabold text-slate-950 sm:text-2xl">Featured and latest properties</h2>
           </div>
           <button
             type="button"
             onClick={() => navigate("/listings")}
-            className="min-h-10 rounded-full bg-slate-900 px-4 text-xs font-bold text-white transition hover:bg-slate-800"
+            className="min-h-9 rounded-full bg-slate-900 px-4 text-xs font-bold text-white transition hover:bg-slate-800"
           >
             View all
           </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-3 min-[500px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
           {loading
             ? Array.from({ length: 10 }).map((_, index) => <PropertySkeleton key={index} />)
             : featuredList.slice(0, 10).map((property, index) => (
@@ -220,172 +199,112 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1fr_320px]">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Recommended</p>
-              <h2 className="text-xl font-extrabold text-slate-950">Buyer favorites</h2>
-            </div>
-          </div>
-          <div className="mt-3 grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 xl:grid-cols-3">
-            {loading
-              ? Array.from({ length: 6 }).map((_, index) => <PropertySkeleton key={index} />)
-              : (recommendedProperties.length > 0 ? recommendedProperties : sortedProperties)
-                  .slice(0, 6)
-                  .map((property) => <PropertyCard key={property._id} property={property} />)}
-          </div>
-        </div>
-
-        <aside className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Popular locations</p>
-            <div className="mt-3 grid gap-2">
-              {popularLocations.length > 0
-                ? popularLocations.map((location) => (
-                    <button
-                      key={location.city}
-                      type="button"
-                      onClick={() => navigate(`/listings?location=${encodeURIComponent(location.city)}`)}
-                      className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-left text-sm transition hover:bg-blue-50"
-                    >
-                      <span className="font-bold text-slate-900">{location.city}</span>
-                      <span className="text-xs text-slate-500">{location.count} listings</span>
-                    </button>
-                  ))
-                : Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} className="h-10 animate-pulse rounded-xl bg-slate-100" />
-                  ))}
-            </div>
+            <h2 className="text-lg font-extrabold text-slate-950">Browse by city</h2>
           </div>
-
-          <div className="rounded-2xl bg-slate-950 p-4 text-white shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-300">Sell faster</p>
-            <h3 className="mt-1 text-lg font-extrabold">Post your property today</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
-              Add clear price, location, image and details for quicker buyer response.
-            </p>
-            <button
-              type="button"
-              onClick={() => navigate("/add")}
-              className="mt-3 min-h-10 rounded-full bg-white px-4 text-xs font-bold text-slate-950 transition hover:bg-slate-100"
-            >
-              Post property
-            </button>
-          </div>
-        </aside>
+          <button
+            type="button"
+            onClick={() => navigate("/listings")}
+            className="min-h-9 rounded-full bg-blue-50 px-4 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
+          >
+            Explore listings
+          </button>
+        </div>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {popularLocations.length > 0
+            ? popularLocations.slice(0, 8).map((location) => (
+                <button
+                  key={location.city}
+                  type="button"
+                  onClick={() => navigate(`/listings?location=${encodeURIComponent(location.city)}`)}
+                  className="flex min-h-10 items-center justify-between rounded-lg bg-slate-50 px-3 text-left text-sm ring-1 ring-slate-100 transition hover:bg-blue-50 hover:ring-blue-100"
+                >
+                  <span className="truncate font-bold text-slate-900">{location.city}</span>
+                  <span className="shrink-0 text-xs text-slate-500">{location.count} listings</span>
+                </button>
+              ))
+            : Array.from({ length: 8 }).map((_, index) => (
+                <div key={index} className="h-10 animate-pulse rounded-lg bg-slate-100" />
+              ))}
+        </div>
       </section>
 
-      <section className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">How it works</p>
-              <h2 className="mt-1 text-xl font-extrabold text-slate-950">Simple property discovery</h2>
+              <h2 className="mt-1 text-lg font-extrabold text-slate-950 sm:text-xl">Simple property discovery</h2>
             </div>
             <button
               type="button"
               onClick={() => navigate("/listings")}
-              className="min-h-10 rounded-full bg-blue-50 px-4 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
+              className="min-h-9 rounded-full bg-blue-50 px-4 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
             >
               Browse listings
             </button>
           </div>
 
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {[
               { icon: "01", title: "Search", description: "Filter by location, category and budget." },
               { icon: "02", title: "Compare", description: "Check price, title, area and seller details." },
               { icon: "03", title: "Contact", description: "Call or request details from the listing." },
               { icon: "04", title: "Close", description: "Move ahead with verified property information." },
             ].map((item) => (
-              <div key={item.title} className="flex gap-3 rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-extrabold text-blue-700 shadow-sm">
+              <div key={item.title} className="flex gap-3 rounded-lg bg-slate-50 p-3 ring-1 ring-slate-100">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-xs font-extrabold text-blue-700 shadow-sm">
                   {item.icon}
                 </span>
                 <div>
                   <p className="text-sm font-bold text-slate-950">{item.title}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-600">{item.description}</p>
+                  <p className="mt-0.5 text-xs leading-5 text-slate-600">{item.description}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-4 grid flex-1 gap-3 xl:grid-cols-[1fr_280px]">
-            <div className="rounded-xl bg-slate-950 p-4 text-white">
+          <div className="mt-3 grid gap-3 xl:grid-cols-[1fr_260px]">
+            <div className="rounded-lg bg-slate-950 p-3 text-white">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-300">Why choose ZameenHub</p>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <div className="mt-2 grid gap-2 sm:grid-cols-4 xl:grid-cols-2">
                 {[
                   "Verified listings",
                   "Direct seller contact",
                   "No brokerage",
                   "Fast search",
                 ].map((item) => (
-                  <div key={item} className="rounded-lg bg-white/10 px-3 py-2 text-xs font-bold">
+                  <div key={item} className="rounded-md bg-white/10 px-3 py-2 text-xs font-bold">
                     {item}
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
+            <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">Post your property</p>
-              <h3 className="mt-1 text-lg font-extrabold text-slate-950">Reach buyers faster</h3>
-              <p className="mt-2 text-xs leading-5 text-slate-600">
+              <h3 className="mt-1 text-base font-extrabold text-slate-950">Reach buyers faster</h3>
+              <p className="mt-1 text-xs leading-5 text-slate-600">
                 Add your property with price, location and photos for better visibility.
               </p>
               <button
                 type="button"
                 onClick={() => navigate("/add")}
-                className="mt-3 min-h-10 rounded-full bg-blue-600 px-4 text-xs font-bold text-white transition hover:bg-blue-700"
+                className="mt-2 min-h-9 rounded-full bg-blue-600 px-4 text-xs font-bold text-white transition hover:bg-blue-700"
               >
                 Post property
               </button>
             </div>
           </div>
-
-          <div className="mt-4">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <p className="text-sm font-extrabold text-slate-950">More active listings</p>
-              <span className="text-xs font-semibold text-slate-500">Compact view</span>
-            </div>
-            <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 xl:grid-cols-3">
-              {loading
-                ? Array.from({ length: 3 }).map((_, index) => <PropertySkeleton key={index} />)
-                : (recommendedProperties.length > 0 ? recommendedProperties : sortedProperties)
-                    .slice(0, 3)
-                    .map((property) => <PropertyCard key={property._id} property={property} />)}
-            </div>
-          </div>
         </div>
 
-        <div className="flex h-full flex-col gap-4">
-          <div className="flex-1 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">FAQ</p>
-            <div className="mt-3">
-              <FAQAccordion items={faqItems} />
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Popular locations</p>
-            <div className="mt-3 grid gap-2">
-              {popularLocations.length > 0
-                ? popularLocations.slice(0, 4).map((location) => (
-                    <button
-                      key={location.city}
-                      type="button"
-                      onClick={() => navigate(`/listings?location=${encodeURIComponent(location.city)}`)}
-                      className="flex min-h-10 items-center justify-between rounded-xl bg-slate-50 px-3 text-left text-sm transition hover:bg-blue-50"
-                    >
-                      <span className="font-bold text-slate-900">{location.city}</span>
-                      <span className="text-xs text-slate-500">{location.count}</span>
-                    </button>
-                  ))
-                : Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} className="h-10 animate-pulse rounded-xl bg-slate-100" />
-                  ))}
-            </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">FAQ</p>
+          <div className="mt-3">
+            <FAQAccordion items={faqItems} />
           </div>
         </div>
       </section>
