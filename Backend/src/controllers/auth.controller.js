@@ -17,8 +17,17 @@ function buildAuthResponse(user) {
   };
 }
 
-export const signup = async (req, res) => {
+function logAuthBody(label, body) {
+  console.log(label, {
+    ...body,
+    password: body?.password ? "[REDACTED]" : body?.password,
+  });
+}
+
+export const signup = async (req, res, next) => {
   try {
+    logAuthBody("SIGNUP BODY:", req.body);
+
     const { name, phone, password } = req.body;
     const trimmedName = String(name || "").trim();
     const normalizedPhone = normalizePhone(phone);
@@ -62,27 +71,28 @@ export const signup = async (req, res) => {
       password: normalizedPassword,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "User registered successfully",
       ...buildAuthResponse(user),
     });
   } catch (error) {
+    console.log(error);
     console.log("SIGNUP ERROR:", error);
 
     if (error.code === 11000) {
-      return res.status(400).json({
+      return res.status(409).json({
         message: "User already exists",
       });
     }
 
-    res.status(500).json({
-      message: error.message || "Server error during signup",
-    });
+    return next(error);
   }
 };
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   try {
+    logAuthBody("LOGIN BODY:", req.body);
+
     const { phone, password } = req.body;
     const normalizedPhone = normalizePhone(phone);
     const normalizedPassword = String(password || "");
@@ -109,14 +119,13 @@ export const login = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Login successful",
       ...buildAuthResponse(user),
     });
   } catch (error) {
+    console.log(error);
     console.log("LOGIN ERROR:", error);
-    res.status(500).json({
-      message: error.message || "Server error during login",
-    });
+    return next(error);
   }
 };
