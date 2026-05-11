@@ -6,6 +6,7 @@ import Input from "../components/ui/Input";
 import StatusBanner from "../components/StatusBanner";
 import Toast from "../components/ui/Toast";
 import { PROPERTY_CATEGORIES } from "../utils/property";
+import { getStoredToken } from "../utils/auth";
 
 function ErrorMessage({ message }) {
   if (!message) return null;
@@ -78,14 +79,19 @@ export default function AddProperty() {
 
     if (!image) {
       newErrors.image = "Property image is required";
+    } else if (!image.type.startsWith("image/")) {
+      newErrors.image = "Upload a valid image file";
+    } else if (image.size > 5 * 1024 * 1024) {
+      newErrors.image = "Image must be 5MB or smaller";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
 
-  const submit = async () => {
-    // Validate form first
+  const submit = async (event) => {
+    event.preventDefault();
+
     if (!validateForm()) {
       setStatus({
         tone: "error",
@@ -95,7 +101,7 @@ export default function AddProperty() {
       return;
     }
 
-    if (!localStorage.getItem("token")) {
+    if (!getStoredToken()) {
       setStatus({ tone: "error", message: "Login is required to list a property." });
       showToast("Login required.", "error");
       return;
@@ -146,13 +152,27 @@ export default function AddProperty() {
   function handleImageChange(e) {
     const file = e.target.files[0];
     if (file) {
+      if (!file.type.startsWith("image/")) {
+        setImage(null);
+        setImagePreview(null);
+        setErrors((current) => ({ ...current, image: "Upload a valid image file" }));
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setImage(null);
+        setImagePreview(null);
+        setErrors((current) => ({ ...current, image: "Image must be 5MB or smaller" }));
+        return;
+      }
+
       setImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
-      setErrors({ ...errors, image: "" });
+      setErrors((current) => ({ ...current, image: "" }));
     }
   }
 
@@ -172,7 +192,7 @@ export default function AddProperty() {
 
       <StatusBanner tone={status.tone} message={status.message} />
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <form onSubmit={submit} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="grid gap-4 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_420px]">
           {/* Form Fields */}
           <div className="space-y-4">
@@ -387,7 +407,7 @@ export default function AddProperty() {
                     ? "border-blue-500 bg-blue-50"
                     : "border-slate-300 bg-slate-50 hover:border-blue-400 hover:bg-blue-50"
                 }`}
-                onClick={() => document.getElementById("imageInput").click()}
+                onClick={() => document.getElementById("imageInput")?.click()}
               >
                 {imagePreview ? (
                   <div className="w-full h-full">
@@ -404,7 +424,7 @@ export default function AddProperty() {
                       Click to upload land or property image
                     </p>
                     <p className="text-xs text-slate-500 mt-1">
-                      JPG, PNG up to 10MB
+                      JPG or PNG up to 5MB
                     </p>
                   </div>
                 )}
@@ -424,13 +444,14 @@ export default function AddProperty() {
         {/* Submit Button */}
         <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button
+            type="button"
             variant="ghost"
             onClick={() => navigate(-1)}
             disabled={loading}
           >
             Cancel
           </Button>
-          <Button onClick={submit} disabled={loading}>
+          <Button type="submit" disabled={loading}>
             {loading ? (
               <span className="flex items-center gap-2">
                 <span className="inline-block animate-spin">⟳</span>
@@ -441,7 +462,7 @@ export default function AddProperty() {
             )}
           </Button>
         </div>
-      </section>
+      </form>
 
       {/* Info Cards */}
       <section className="grid gap-4 md:grid-cols-2">

@@ -55,7 +55,7 @@ export default function Login() {
   function validateForm() {
     const nextErrors = {};
     const normalizedPhone = normalizePhone(phone);
-    const trimmedPassword = password.trim();
+    const normalizedPassword = password;
 
     if (!normalizedPhone) {
       nextErrors.phone = "Phone number is required";
@@ -63,9 +63,9 @@ export default function Login() {
       nextErrors.phone = "Phone must be at least 10 digits";
     }
 
-    if (!trimmedPassword) {
+    if (!normalizedPassword) {
       nextErrors.password = "Password is required";
-    } else if (trimmedPassword.length < 6) {
+    } else if (normalizedPassword.length < 6) {
       nextErrors.password = "Password must be at least 6 characters";
     }
 
@@ -92,8 +92,12 @@ export default function Login() {
 
       const response = await API.post("/auth/login", {
         phone: normalizePhone(phone),
-        password: password.trim(),
+        password,
       });
+
+      if (!response.data?.token || !response.data?.user) {
+        throw new Error("Login response was missing session data.");
+      }
 
       saveSession({
         token: response.data.token,
@@ -111,7 +115,7 @@ export default function Login() {
       }, 1000);
     } catch (error) {
       const message =
-        error.response?.data?.message || "Login failed. Please try again.";
+        error.response?.data?.message || error.message || "Login failed. Please try again.";
 
       setStatus({ tone: "error", message });
       setToast({ message, tone: "error" });

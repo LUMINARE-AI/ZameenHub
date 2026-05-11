@@ -53,7 +53,7 @@ export default function Signup() {
     const nextErrors = {};
     const trimmedName = name.trim();
     const normalizedPhone = normalizePhone(phone);
-    const trimmedPassword = password.trim();
+    const normalizedPassword = password;
 
     if (!trimmedName) {
       nextErrors.name = "Name is required";
@@ -67,15 +67,15 @@ export default function Signup() {
       nextErrors.phone = "Phone must be at least 10 digits";
     }
 
-    if (!trimmedPassword) {
+    if (!normalizedPassword) {
       nextErrors.password = "Password is required";
-    } else if (trimmedPassword.length < 6) {
+    } else if (normalizedPassword.length < 6) {
       nextErrors.password = "Password must be at least 6 characters";
     }
 
     if (!confirmPassword) {
       nextErrors.confirmPassword = "Confirm password is required";
-    } else if (trimmedPassword !== confirmPassword) {
+    } else if (normalizedPassword !== confirmPassword) {
       nextErrors.confirmPassword = "Passwords do not match";
     }
 
@@ -103,8 +103,12 @@ export default function Signup() {
       const response = await API.post("/auth/signup", {
         name: name.trim(),
         phone: normalizePhone(phone),
-        password: password.trim(),
+        password,
       });
+
+      if (!response.data?.token || !response.data?.user) {
+        throw new Error("Signup response was missing session data.");
+      }
 
       saveSession({
         token: response.data.token,
@@ -123,6 +127,7 @@ export default function Signup() {
     } catch (error) {
       const message =
         error.response?.data?.message ||
+        error.message ||
         "Unable to create account. Please try again.";
 
       setStatus({ tone: "error", message });

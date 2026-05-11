@@ -1,9 +1,9 @@
 import Property from "../models/property.model.js";
 
-export const getMyProperties = async (req, res) => {
+export const getMyProperties = async (req, res, next) => {
   try {
     if (!req.user || !req.user._id) {
-      return res.status(401).json({ message: "User not authorized" });
+      return res.status(401).json({ message: "Login required" });
     }
 
     const properties = await Property.find({
@@ -12,9 +12,9 @@ export const getMyProperties = async (req, res) => {
       .populate("owner", "name phone")
       .sort({ createdAt: -1 });
 
-    res.json(properties);
+    return res.json(properties);
   } catch (error) {
-    console.log("❌ DASHBOARD ERROR:", error);
-    res.status(500).json({ message: error.message });
+    console.error("DASHBOARD ERROR:", error);
+    return next(error);
   }
 };

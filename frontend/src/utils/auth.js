@@ -16,11 +16,21 @@ function normalizeUser(user) {
 }
 
 export function getStoredToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
 }
 
 export function getStoredUser() {
-  const rawUser = localStorage.getItem(USER_KEY);
+  let rawUser = null;
+
+  try {
+    rawUser = localStorage.getItem(USER_KEY);
+  } catch {
+    return null;
+  }
 
   if (!rawUser) {
     return null;
@@ -34,14 +44,23 @@ export function getStoredUser() {
 }
 
 export function saveSession({ token, user }) {
+  if (!token || !user) {
+    return;
+  }
+
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, JSON.stringify(normalizeUser(user)));
   window.dispatchEvent(new Event(SESSION_EVENT));
 }
 
 export function clearSession() {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  } catch {
+    // Ignore storage failures so logout still completes.
+  }
+
   window.dispatchEvent(new Event(SESSION_EVENT));
 }
 

@@ -109,40 +109,42 @@ export default function Home() {
   return (
     <div className="space-y-4 sm:space-y-5">
       <section
-        className="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-950 shadow-sm"
+        className="relative min-h-[440px] overflow-hidden rounded-xl border border-slate-200 bg-slate-950 shadow-sm sm:min-h-[420px] lg:min-h-[360px]"
         onTouchStart={(event) => setTouchStart(event.touches[0].clientX)}
         onTouchEnd={handleTouchEnd}
       >
         <img
           src={heroSlides[activeSlide].image}
           alt={heroSlides[activeSlide].title}
-          className="h-[260px] w-full object-cover opacity-70 sm:h-[280px] lg:h-[300px]"
+          className="absolute inset-0 h-full w-full object-cover opacity-70"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-slate-950/10" />
-        <div className="absolute inset-0 flex items-center px-4 py-3 sm:px-5 lg:px-7">
-          <div className="w-full max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-200">ZameenHub marketplace</p>
-            <h1 className="mt-1 max-w-2xl text-2xl font-extrabold leading-tight text-white sm:text-4xl">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/75 via-slate-950/68 to-slate-950/88 sm:bg-gradient-to-r sm:from-slate-950/90 sm:via-slate-950/55 sm:to-slate-950/15" />
+        <div className="relative z-10 flex min-h-[440px] items-center px-4 py-6 sm:min-h-[420px] sm:px-6 sm:py-7 lg:min-h-[360px] lg:px-8">
+          <div className="w-full max-w-[680px]">
+            <p className="max-w-full text-[10px] font-bold uppercase leading-4 tracking-[0.14em] text-sky-200 sm:text-xs sm:tracking-[0.18em]">
+              ZameenHub marketplace
+            </p>
+            <h1 className="mt-2 max-w-[18rem] text-[1.9rem] font-extrabold leading-[1.08] text-white sm:max-w-2xl sm:text-4xl sm:leading-tight lg:text-[2.8rem]">
               {heroSlides[activeSlide].title}
             </h1>
-            <p className="mt-2 max-w-xl text-sm leading-5 text-slate-200">
+            <p className="mt-3 max-w-[20rem] text-sm leading-6 text-slate-200 sm:max-w-xl">
               {heroSlides[activeSlide].description}
             </p>
 
             <form
               onSubmit={handleSearch}
-              className="mt-4 grid gap-2 rounded-xl bg-white/95 p-2 shadow-lg sm:grid-cols-[1.5fr_1fr_auto]"
+              className="mt-5 grid w-full max-w-[22rem] gap-2 rounded-xl bg-white/95 p-2.5 shadow-lg sm:max-w-3xl sm:grid-cols-[1.5fr_1fr_auto] sm:p-2"
             >
               <input
                 value={searchLocation}
                 onChange={(event) => setSearchLocation(event.target.value)}
                 placeholder="City or locality"
-                className="min-h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="min-h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:min-h-10"
               />
               <select
                 value={searchCategory}
                 onChange={(event) => setSearchCategory(event.target.value)}
-                className="min-h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:min-h-10"
               >
                 {categories.map((item) => (
                   <option key={item.query} value={item.query}>
@@ -152,13 +154,13 @@ export default function Home() {
               </select>
               <button
                 type="submit"
-                className="min-h-10 rounded-lg bg-blue-600 px-5 text-sm font-bold text-white transition hover:bg-blue-700"
+                className="min-h-11 w-full rounded-lg bg-blue-600 px-5 text-sm font-bold text-white transition hover:bg-blue-700 sm:min-h-10 sm:w-auto"
               >
                 Search
               </button>
             </form>
 
-            <div className="mt-3 flex gap-2">
+            <div className="mt-4 flex gap-2">
               {heroSlides.map((slide, index) => (
                 <button
                   key={slide.title}

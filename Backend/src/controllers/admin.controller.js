@@ -1,18 +1,19 @@
 import Property from "../models/property.model.js";
 
-export const getPendingProperties = async (req, res) => {
+export const getPendingProperties = async (req, res, next) => {
   try {
     const properties = await Property.find({ status: "pending" })
       .populate("owner", "name phone role")
       .sort({ createdAt: -1 });
 
-    res.json(properties);
+    return res.json(properties);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("ADMIN PENDING ERROR:", error);
+    return next(error);
   }
 };
 
-export const approveProperty = async (req, res) => {
+export const approveProperty = async (req, res, next) => {
   try {
     const property = await Property.findById(req.params.id);
 
@@ -23,17 +24,17 @@ export const approveProperty = async (req, res) => {
     property.status = "approved";
     await property.save();
 
-    res.json({
+    return res.json({
       message: "Property approved successfully",
       property,
     });
-
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("ADMIN APPROVE ERROR:", error);
+    return next(error);
   }
 };
 
-export const deletePropertyAdmin = async (req, res) => {
+export const deletePropertyAdmin = async (req, res, next) => {
   try {
     const property = await Property.findByIdAndDelete(req.params.id);
 
@@ -41,8 +42,9 @@ export const deletePropertyAdmin = async (req, res) => {
       return res.status(404).json({ message: "Property not found" });
     }
 
-    res.json({ message: "Property deleted by admin" });
+    return res.json({ message: "Property deleted by admin" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("ADMIN DELETE ERROR:", error);
+    return next(error);
   }
 };

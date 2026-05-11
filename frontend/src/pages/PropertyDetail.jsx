@@ -66,6 +66,11 @@ export default function PropertyDetail() {
   }
 
   const isAdmin = user?.role === "admin";
+  const images =
+    Array.isArray(property.images) && property.images.length > 0
+      ? property.images
+      : [property.image].filter(Boolean);
+  const activeImageSrc = images[activeImage] || images[0] || property.image;
 
   const highlightItems = property.highlights?.length
     ? property.highlights
@@ -129,24 +134,24 @@ export default function PropertyDetail() {
         <section className="overflow-hidden rounded-[36px] border border-white/70 bg-white/80 p-4 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.3)]">
           <div className="relative overflow-hidden rounded-[28px]">
             <img
-              src={property.images[activeImage] || property.image}
+              src={activeImageSrc}
               alt={property.title}
-              className="h-[460px] w-full object-cover"
+              className="h-[280px] w-full object-cover sm:h-[380px] lg:h-[460px]"
             />
-            <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent px-6 py-5 text-white">
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent px-4 py-4 text-white sm:flex-row sm:items-end sm:justify-between sm:px-6 sm:py-5">
               <div>
                 <p className="text-sm uppercase tracking-[0.24em] text-sky-300">{property.category}</p>
                 <p className="text-xl font-semibold">{property.location}</p>
               </div>
-              <div className="rounded-3xl bg-white/10 px-4 py-2 text-sm backdrop-blur-sm">
+              <div className="w-fit rounded-3xl bg-white/10 px-4 py-2 text-sm backdrop-blur-sm">
                 <RatingStars rating={property.averageRating} />
                 <p className="text-xs text-slate-200">{property.averageRating ? property.averageRating.toFixed(1) : "New"} · {property.numberOfReviews || 0} reviews</p>
               </div>
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-4">
-            {property.images.slice(0, 3).map((image, index) => (
+          <div className="mt-4 grid grid-cols-3 gap-3 sm:gap-4">
+            {images.slice(0, 3).map((image, index) => (
               <button
                 key={`${image}-${index}`}
                 type="button"
@@ -155,7 +160,7 @@ export default function PropertyDetail() {
                   activeImage === index ? "border-blue-500" : "border-transparent"
                 }`}
               >
-                <img src={image} alt={`${property.title} ${index + 1}`} className="h-28 w-full object-cover" />
+                <img src={image} alt={`${property.title} ${index + 1}`} className="h-20 w-full object-cover sm:h-28" />
               </button>
             ))}
           </div>
@@ -169,7 +174,7 @@ export default function PropertyDetail() {
               <p className="mt-2 text-sm text-slate-500">{property.location}</p>
             </div>
 
-            <div className="space-y-3 text-right">
+            <div className="space-y-3 sm:text-right">
               <p className="text-3xl font-semibold text-slate-950">{formatPrice(property.price)}</p>
               <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${property.status === "approved" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
                 {property.status === "approved" ? "Approved" : "Pending"}

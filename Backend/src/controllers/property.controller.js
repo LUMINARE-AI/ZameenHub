@@ -10,85 +10,133 @@ const PROPERTY_CATEGORIES = [
   "Flats / Homes",
 ];
 
-// ➕ ADD PROPERTY
-export const addProperty = async (req, res) => {
+function text(value) {
+  return String(value || "").trim();
+}
+
+function positiveNumber(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function optionalNumber(value) {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
+}
+
+function getUploadedImage(req) {
+  return req.file?.path || req.file?.secure_url || req.file?.url || "";
+}
+
+function getHighlights(value) {
+  if (Array.isArray(value)) {
+    return value.map(text).filter(Boolean);
+  }
+
+  return text(value)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function buildPropertyPayload(body, req) {
+  const price = positiveNumber(body.price);
+  const carpetArea = optionalNumber(body.carpetArea);
+  const enteredPricePerSqFt = optionalNumber(body.pricePerSqFt);
+
+  return {
+    title: text(body.title),
+    category: text(body.category) || "Plots",
+    price,
+    location: text(body.location),
+    description: text(body.description),
+    image: getUploadedImage(req),
+    contact: req.user?.phone || "",
+    owner: req.user?._id,
+    status: "pending",
+    featured: body.featured === true || body.featured === "true",
+    carpetArea,
+    configuration: text(body.configuration),
+    floorNumber: optionalNumber(body.floorNumber),
+    totalFloors: optionalNumber(body.totalFloors),
+    facing: text(body.facing),
+    overlooking: text(body.overlooking),
+    propertyAge: text(body.propertyAge),
+    pricePerSqFt:
+      enteredPricePerSqFt || (price && carpetArea ? Math.round(price / carpetArea) : undefined),
+    highlights: getHighlights(body.highlights),
+  };
+}
+
+function validateRequiredPropertyFields(payload) {
+  if (!payload.title || payload.title.length < 5) {
+    return "Property title must be at least 5 characters";
+  }
+
+  if (!payload.location || payload.location.length < 3) {
+    return "Property location must be at least 3 characters";
+  }
+
+  if (!payload.description || payload.description.length < 20) {
+    return "Property description must be at least 20 characters";
+  }
+
+  if (!payload.price) {
+    return "Enter a valid property price";
+  }
+
+  if (!payload.image) {
+    return "Property image is required";
+  }
+
+  if (!PROPERTY_CATEGORIES.includes(payload.category)) {
+    return "Select a valid property category";
+  }
+
+  return "";
+}
+
+export const addProperty = async (req, res, next) => {
   try {
-    console.log("🔥 ADD PROPERTY");
-
-    console.log("BODY:", req.body);
-    console.log("FILE:", req.file);
-    console.log("USER:", req.user);
-
     if (!req.user) {
-      return res.status(401).json({ message: "User not authorized" });
+      return res.status(401).json({ message: "Login required to list a property" });
     }
 
-    const title = String(req.body.title || "").trim();
-    const category = String(req.body.category || "Plots").trim();
-    const price = Number(req.body.price);
-    const location = String(req.body.location || "").trim();
-    const description = String(req.body.description || "").trim();
-    const image = req.file?.path || req.file?.secure_url || req.file?.url || "";
-    const carpetArea = Number(req.body.carpetArea) || undefined;
-    const configuration = String(req.body.configuration || "").trim();
-    const floorNumber = Number(req.body.floorNumber) || undefined;
-    const totalFloors = Number(req.body.totalFloors) || undefined;
-    const facing = String(req.body.facing || "").trim();
-    const overlooking = String(req.body.overlooking || "").trim();
-    const propertyAge = String(req.body.propertyAge || "").trim();
-    const pricePerSqFt = Number(req.body.pricePerSqFt) || undefined;
-    const highlights = String(req.body.highlights || "")
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean);
+    const payload = buildPropertyPayload(req.body, req);
+    const validationError = validateRequiredPropertyFields(payload);
 
-    if (!title || !price || !location) {
-      return res.status(400).json({ message: "Missing fields" });
+    if (validationError) {
+      return res.status(400).json({ message: validationError });
     }
 
-    if (!PROPERTY_CATEGORIES.includes(category)) {
-      return res.status(400).json({ message: "Select a valid property category" });
-    }
+    const property = await Property.create(payload);
 
-    const property = await Property.create({
-      title,
-      category,
-      price,
-      location,
-      description,
-      image,
-      contact: req.user.phone || "",
-      owner: req.user._id,
-      status: "pending",
-      featured: Boolean(req.body.featured),
-      carpetArea,
-      configuration,
-      floorNumber,
-      totalFloors,
-      facing,
-      overlooking,
-      propertyAge,
-      pricePerSqFt: pricePerSqFt || (carpetArea ? Math.round(price / carpetArea) : undefined),
-      highlights,
+    return res.status(201).json({
+      message: "Property submitted successfully and is pending approval",
+      property,
     });
-
-    res.status(201).json(property);
-
   } catch (error) {
-    console.log("🔥 REAL ERROR:", error); // 👈 ye important hai
-    res.status(500).json({ message: error.message });
+    console.error("ADD PROPERTY ERROR:", error);
+    return next(error);
   }
 };
 
-// 📦 GET APPROVED PROPERTIES
-export const getProperties = async (req, res) => {
+export const getProperties = async (req, res, next) => {
   try {
     const filters = { status: "approved" };
-    const category = String(req.query.category || "").trim();
-    const location = String(req.query.location || "").trim();
-    const maxPrice = Number(req.query.maxPrice);
+    const category = text(req.query.category);
+    const location = text(req.query.location);
+    const maxPrice = positiveNumber(req.query.maxPrice);
 
     if (category) {
+      if (!PROPERTY_CATEGORIES.includes(category)) {
+        return res.status(400).json({ message: "Select a valid property category" });
+      }
+
       filters.category = category;
     }
 
@@ -96,7 +144,7 @@ export const getProperties = async (req, res) => {
       filters.location = { $regex: location, $options: "i" };
     }
 
-    if (Number.isFinite(maxPrice) && maxPrice > 0) {
+    if (maxPrice) {
       filters.price = { $lte: maxPrice };
     }
 
@@ -104,15 +152,14 @@ export const getProperties = async (req, res) => {
       .populate("owner", "name phone")
       .sort({ createdAt: -1 });
 
-    res.json(properties);
+    return res.json(properties);
   } catch (error) {
-    console.log("❌ GET PROPERTIES ERROR:", error);
-    res.status(500).json({ message: error.message });
+    console.error("GET PROPERTIES ERROR:", error);
+    return next(error);
   }
 };
 
-// ✏️ UPDATE PROPERTY
-export const updateProperty = async (req, res) => {
+export const updateProperty = async (req, res, next) => {
   try {
     const property = await Property.findById(req.params.id);
 
@@ -121,63 +168,80 @@ export const updateProperty = async (req, res) => {
     }
 
     if (property.owner.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Not allowed" });
+      return res.status(403).json({ message: "You can only edit your own properties" });
     }
 
-    const updates = { ...req.body };
+    const allowedFields = [
+      "title",
+      "category",
+      "price",
+      "location",
+      "description",
+      "carpetArea",
+      "configuration",
+      "floorNumber",
+      "totalFloors",
+      "facing",
+      "overlooking",
+      "propertyAge",
+      "pricePerSqFt",
+      "highlights",
+    ];
+
+    const updates = {};
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    ["title", "category", "location", "description", "configuration", "facing", "overlooking", "propertyAge"].forEach(
+      (field) => {
+        if (updates[field] !== undefined) {
+          updates[field] = text(updates[field]);
+        }
+      }
+    );
 
     if (updates.category !== undefined && !PROPERTY_CATEGORIES.includes(updates.category)) {
       return res.status(400).json({ message: "Select a valid property category" });
     }
 
     if (updates.price !== undefined) {
-      const price = Number(updates.price);
+      updates.price = positiveNumber(updates.price);
 
-      if (!Number.isFinite(price) || price <= 0) {
-        return res.status(400).json({
-          message: "Enter a valid property price",
-        });
+      if (!updates.price) {
+        return res.status(400).json({ message: "Enter a valid property price" });
       }
-
-      updates.price = price;
     }
 
-    if (updates.carpetArea !== undefined) {
-      const carpetArea = Number(updates.carpetArea);
-      updates.carpetArea = Number.isFinite(carpetArea) ? carpetArea : undefined;
+    ["carpetArea", "floorNumber", "totalFloors", "pricePerSqFt"].forEach((field) => {
+      if (updates[field] !== undefined) {
+        updates[field] = optionalNumber(updates[field]);
+      }
+    });
+
+    if (updates.highlights !== undefined) {
+      updates.highlights = getHighlights(updates.highlights);
     }
 
-    if (updates.floorNumber !== undefined) {
-      const floorNumber = Number(updates.floorNumber);
-      updates.floorNumber = Number.isFinite(floorNumber) ? floorNumber : undefined;
-    }
+    const updated = await Property.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    }).populate("owner", "name phone");
 
-    if (updates.totalFloors !== undefined) {
-      const totalFloors = Number(updates.totalFloors);
-      updates.totalFloors = Number.isFinite(totalFloors) ? totalFloors : undefined;
-    }
-
-    if (updates.pricePerSqFt !== undefined) {
-      const pricePerSqFt = Number(updates.pricePerSqFt);
-      updates.pricePerSqFt = Number.isFinite(pricePerSqFt)
-        ? pricePerSqFt
-        : property.pricePerSqFt;
-    }
-
-    const updated = await Property.findByIdAndUpdate(
-      req.params.id,
-      updates,
-      { new: true }
-    );
-
-    res.json(updated);
+    return res.json({
+      message: "Property updated successfully",
+      property: updated,
+    });
   } catch (error) {
-    console.log("❌ UPDATE ERROR:", error);
-    res.status(500).json({ message: error.message });
+    console.error("UPDATE PROPERTY ERROR:", error);
+    return next(error);
   }
 };
 
-export const rateProperty = async (req, res) => {
+export const rateProperty = async (req, res, next) => {
   try {
     if (!req.user) {
       return res.status(401).json({ message: "Login required to rate properties" });
@@ -190,7 +254,7 @@ export const rateProperty = async (req, res) => {
     }
 
     const rating = Number(req.body.rating);
-    const comment = String(req.body.comment || "").trim();
+    const comment = text(req.body.comment);
 
     if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
       return res.status(400).json({ message: "Rating must be between 1 and 5" });
@@ -202,9 +266,7 @@ export const rateProperty = async (req, res) => {
 
     if (existingReview) {
       existingReview.rating = rating;
-      if (comment) {
-        existingReview.comment = comment;
-      }
+      existingReview.comment = comment;
       existingReview.updatedAt = new Date();
     } else {
       property.reviews.push({
@@ -221,15 +283,17 @@ export const rateProperty = async (req, res) => {
 
     await property.save();
 
-    res.json(property);
+    return res.json({
+      message: "Rating submitted successfully",
+      property,
+    });
   } catch (error) {
-    console.log("❌ RATING ERROR:", error);
-    res.status(500).json({ message: error.message });
+    console.error("RATING ERROR:", error);
+    return next(error);
   }
 };
 
-// ❌ DELETE PROPERTY
-export const deleteProperty = async (req, res) => {
+export const deleteProperty = async (req, res, next) => {
   try {
     const property = await Property.findById(req.params.id);
 
@@ -241,14 +305,14 @@ export const deleteProperty = async (req, res) => {
       req.user.role !== "admin" &&
       property.owner.toString() !== req.user._id.toString()
     ) {
-      return res.status(403).json({ message: "Not allowed" });
+      return res.status(403).json({ message: "You can only delete your own properties" });
     }
 
     await property.deleteOne();
 
-    res.json({ message: "Property deleted" });
+    return res.json({ message: "Property deleted successfully" });
   } catch (error) {
-    console.log("❌ DELETE ERROR:", error);
-    res.status(500).json({ message: error.message });
+    console.error("DELETE PROPERTY ERROR:", error);
+    return next(error);
   }
 };

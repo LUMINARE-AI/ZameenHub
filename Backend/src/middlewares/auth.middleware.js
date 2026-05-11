@@ -3,32 +3,39 @@ import User from "../models/user.model.js";
 
 const protect = async (req, res, next) => {
   try {
-    // 🔥 1. Get token from header
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization || "";
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "No token provided" });
+    if (!authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Login required" });
     }
 
-    const token = authHeader.split(" ")[1];
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: "JWT_SECRET is not configured" });
+    }
 
-    // 🔥 2. Verify token
+    const token = authHeader.split(" ")[1]?.trim();
+
+    if (!token) {
+      return res.status(401).json({ message: "Login required" });
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // 🔥 3. Get user from DB
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
-      return res.status(401).json({ message: "User not found" });
+      return res.status(401).json({ message: "User account no longer exists" });
     }
 
-    // 🔥 4. Attach user to request
     req.user = user;
-
     next();
   } catch (error) {
-    console.log("AUTH ERROR:", error);
-    res.status(401).json({ message: "Not authorized, invalid token" });
+    console.error("AUTH ERROR:", error.message);
+
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Session expired. Please login again." });
+    }
+
+    return res.status(401).json({ message: "Invalid session. Please login again." });
   }
 };
 

@@ -10,7 +10,7 @@ export default function ProtectedRoute({
   const token = getStoredToken();
   const user = getStoredUser();
 
-  if (!token) {
+  if (!token || !user) {
     return <Navigate to={fallbackPath} replace state={{ from: location.pathname }} />;
   }
 

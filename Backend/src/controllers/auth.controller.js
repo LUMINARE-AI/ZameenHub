@@ -1,5 +1,4 @@
 import User from "../models/user.model.js";
-import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 
 function normalizePhone(phone) {
@@ -23,9 +22,9 @@ export const signup = async (req, res) => {
     const { name, phone, password } = req.body;
     const trimmedName = String(name || "").trim();
     const normalizedPhone = normalizePhone(phone);
-    const normalizedPassword = String(password || "").trim();
+    const normalizedPassword = String(password || "");
 
-    if (!trimmedName || !normalizedPhone || !normalizedPassword) {
+    if (!trimmedName || !normalizedPhone || !normalizedPassword.trim()) {
       return res.status(400).json({
         message: "Name, phone, and password are required",
       });
@@ -57,13 +56,10 @@ export const signup = async (req, res) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(normalizedPassword, salt);
-
     const user = await User.create({
       name: trimmedName,
       phone: normalizedPhone,
-      password: hashedPassword,
+      password: normalizedPassword,
     });
 
     res.status(201).json({
@@ -89,9 +85,9 @@ export const login = async (req, res) => {
   try {
     const { phone, password } = req.body;
     const normalizedPhone = normalizePhone(phone);
-    const normalizedPassword = String(password || "").trim();
+    const normalizedPassword = String(password || "");
 
-    if (!normalizedPhone || !normalizedPassword) {
+    if (!normalizedPhone || !normalizedPassword.trim()) {
       return res.status(400).json({
         message: "Phone and password are required",
       });

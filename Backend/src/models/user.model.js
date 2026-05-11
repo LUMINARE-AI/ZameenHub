@@ -11,9 +11,13 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
       required: [true, "Phone is required"],
-      unique: [true, "Phone already exists"],
+      unique: true,
       trim: true,
       set: (value) => String(value || "").replace(/\D/g, ""),
+      validate: {
+        validator: (value) => /^\d{10,15}$/.test(value),
+        message: "Phone number must contain 10 to 15 digits",
+      },
     },
     password: {
       type: String,
@@ -29,6 +33,16 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre("save", async function hashPassword(next) {
+  if (!this.isModified("password")) {
+    next();
+    return;
+  }
+
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return bcrypt.compare(enteredPassword, this.password);

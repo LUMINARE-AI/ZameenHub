@@ -5,7 +5,7 @@ import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import Toast from "../components/ui/Toast";
 import API from "../services/api";
-import { formatPrice } from "../utils/property";
+import { formatPrice, PROPERTY_CATEGORIES } from "../utils/property";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -89,6 +89,26 @@ export default function Dashboard() {
   }
 
   async function saveProperty(id) {
+    if (draft.title.trim().length < 5) {
+      setStatus({ tone: "error", message: "Title must be at least 5 characters." });
+      return;
+    }
+
+    if (draft.location.trim().length < 3) {
+      setStatus({ tone: "error", message: "Location must be at least 3 characters." });
+      return;
+    }
+
+    if (draft.description.trim().length < 20) {
+      setStatus({ tone: "error", message: "Description must be at least 20 characters." });
+      return;
+    }
+
+    if (!Number.isFinite(Number(draft.price)) || Number(draft.price) <= 0) {
+      setStatus({ tone: "error", message: "Enter a valid property price." });
+      return;
+    }
+
     try {
       await API.put(`/properties/${id}`, {
         title: draft.title.trim(),
@@ -201,7 +221,7 @@ export default function Dashboard() {
                       }
                       className="w-full rounded-[24px] border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                     >
-                      {["Plots", "Commercial Land", "Agricultural Land", "Flats", "Shops", "PG", "Flats / Homes"].map((category) => (
+                      {PROPERTY_CATEGORIES.map((category) => (
                         <option key={category} value={category}>
                           {category}
                         </option>
@@ -222,8 +242,8 @@ export default function Dashboard() {
                       className="w-full rounded-[24px] border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                     />
                     <div className="flex gap-3">
-                      <Button onClick={() => saveProperty(property._id)}>Save</Button>
-                      <Button variant="ghost" onClick={stopEditing}>
+                      <Button type="button" onClick={() => saveProperty(property._id)}>Save</Button>
+                      <Button type="button" variant="ghost" onClick={stopEditing}>
                         Cancel
                       </Button>
                     </div>
@@ -241,10 +261,10 @@ export default function Dashboard() {
                     <p className="mt-4 text-sm leading-6 text-slate-600">{property.description}</p>
 
                     <div className="mt-6 flex gap-3">
-                      <Button variant="ghost" onClick={() => startEditing(property)}>
+                      <Button type="button" variant="ghost" onClick={() => startEditing(property)}>
                         Edit
                       </Button>
-                      <Button variant="dark" onClick={() => deleteProperty(property._id)}>
+                      <Button type="button" variant="dark" onClick={() => deleteProperty(property._id)}>
                         Delete
                       </Button>
                     </div>
