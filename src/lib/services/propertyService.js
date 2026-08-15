@@ -79,7 +79,7 @@ async function buildPropertyPayload(body, user, imageUrl) {
     contact: user?.phone || "",
     owner: user?._id,
     status: "pending",
-    featured: body.featured === true || body.featured === "true",
+    featured: false,
     carpetArea,
     configuration: text(body.configuration),
     floorNumber: optionalNumber(body.floorNumber),

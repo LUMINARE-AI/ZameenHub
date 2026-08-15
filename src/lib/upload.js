@@ -2,9 +2,9 @@ import cloudinary from "@/lib/cloudinary";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-export async function uploadImage(file) {
+function validateImageFile(file) {
   if (!file || typeof file === "string") {
-    return "";
+    return null;
   }
 
   if (!file.type?.startsWith("image/")) {
@@ -15,13 +15,23 @@ export async function uploadImage(file) {
     throw new Error("Image must be 5MB or smaller");
   }
 
-  const bytes = await file.arrayBuffer();
+  return file;
+}
+
+export async function uploadImageWithMeta(file, options = {}) {
+  const validFile = validateImageFile(file);
+
+  if (!validFile) {
+    return null;
+  }
+
+  const bytes = await validFile.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder: "asli-patta",
+        folder: options.folder || "asli-patta",
         resource_type: "image",
       },
       (error, result) => {
@@ -30,10 +40,30 @@ export async function uploadImage(file) {
           return;
         }
 
-        resolve(result?.secure_url || "");
+        resolve({
+          secure_url: result?.secure_url || "",
+          public_id: result?.public_id || "",
+        });
       }
     );
 
     stream.end(buffer);
   });
+}
+
+export async function uploadImage(file, options = {}) {
+  const result = await uploadImageWithMeta(file, options);
+  return result?.secure_url || "";
+}
+
+export async function destroyImage(publicId) {
+  if (!publicId || publicId.startsWith("/")) {
+    return;
+  }
+
+  try {
+    await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+  } catch (error) {
+    console.error("Cloudinary destroy failed:", error);
+  }
 }

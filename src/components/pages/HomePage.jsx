@@ -20,24 +20,7 @@ import PropertyCard from "@/components/PropertyCard";
 import PropertySkeleton from "@/components/PropertySkeleton";
 import FAQAccordion from "@/components/FAQAccordion";
 import useProperties from "@/hooks/useProperties";
-
-const heroSlides = [
-  {
-    image: "/property1.jpeg",
-    title: "Find plots, land and shops faster",
-    description: "Verified listings with clear pricing, location and seller contact.",
-  },
-  {
-    image: "/property2.jpeg",
-    title: "Compare compact property options",
-    description: "Browse high-value properties without noisy cards or wasted space.",
-  },
-  {
-    image: "/property3.jpeg",
-    title: "Post property with buyer-ready details",
-    description: "List plots, shops and flats with quick approval workflows.",
-  },
-];
+import useHomeContent from "@/hooks/useHomeContent";
 
 const faqItems = [
   {
@@ -104,30 +87,10 @@ const howItWorks = [
   { icon: Handshake, title: "Close", description: "Move ahead with verified property information." },
 ];
 
-const testimonials = [
-  {
-    name: "Rahul Sharma",
-    role: "Plot buyer, Jaipur",
-    quote: "Found a verified plot in 2 days. Direct seller contact saved brokerage.",
-    rating: 5,
-  },
-  {
-    name: "Priya Mehta",
-    role: "Shop seller, Udaipur",
-    quote: "Listed my shop and got genuine inquiries within a week. Smooth approval process.",
-    rating: 5,
-  },
-  {
-    name: "Amit Patel",
-    role: "Land investor, Ahmedabad",
-    quote: "Clean search filters and verified badges make comparison so much easier.",
-    rating: 4,
-  },
-];
-
 export default function HomePage() {
   const router = useRouter();
   const { properties, featuredProperties, loading } = useProperties();
+  const { heroSlides, testimonials } = useHomeContent();
   const [activeSlide, setActiveSlide] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [searchCity, setSearchCity] = useState("");
@@ -141,23 +104,36 @@ export default function HomePage() {
       const img = new window.Image();
       img.src = slide.image;
     });
-  }, []);
+  }, [heroSlides]);
 
   useEffect(() => {
+    if (!heroSlides.length) {
+      return undefined;
+    }
+
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % heroSlides.length);
     }, 5500);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [heroSlides.length]);
 
   useEffect(() => {
+    if (!testimonials.length) {
+      return undefined;
+    }
+
     const timer = window.setInterval(() => {
       setActiveTestimonial((current) => (current + 1) % testimonials.length);
     }, 6000);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [testimonials.length]);
+
+  const safeSlide = heroSlides.length ? activeSlide % heroSlides.length : 0;
+  const safeTestimonial = testimonials.length
+    ? activeTestimonial % testimonials.length
+    : 0;
 
   const sortedProperties = useMemo(
     () => [...properties].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
@@ -223,10 +199,10 @@ export default function HomePage() {
               src={slide.image}
               alt={slide.title}
               className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
-                index === activeSlide ? "opacity-100" : "opacity-0"
+                index === safeSlide ? "opacity-100" : "opacity-0"
               }`}
               fetchPriority={index === 0 ? "high" : "low"}
-              aria-hidden={index !== activeSlide}
+              aria-hidden={index !== safeSlide}
             />
           ))}
 
@@ -319,7 +295,7 @@ export default function HomePage() {
                   type="button"
                   onClick={() => setActiveSlide(index)}
                   className={`rounded-full transition-all duration-300 ${
-                    index === activeSlide
+                    index === safeSlide
                       ? "h-2 w-10 bg-brand-accent-light shadow-sm shadow-black/20"
                       : "h-2 w-2 bg-white/50 hover:bg-white/70"
                   }`}
@@ -449,9 +425,9 @@ export default function HomePage() {
         <div className="relative mt-4 overflow-hidden rounded-2xl border border-brand/10 bg-white p-5 shadow-sm">
           {testimonials.map((item, index) => (
             <div
-              key={item.name}
+              key={item._id || item.name}
               className={`transition-all duration-500 ${
-                index === activeTestimonial
+                index === safeTestimonial
                   ? "relative opacity-100"
                   : "pointer-events-none absolute inset-0 p-5 opacity-0"
               }`}
@@ -473,7 +449,7 @@ export default function HomePage() {
                 type="button"
                 onClick={() => setActiveTestimonial(index)}
                 className={`h-1.5 rounded-full transition-all ${
-                  index === activeTestimonial ? "w-6 bg-brand" : "w-1.5 bg-brand/20"
+                  index === safeTestimonial ? "w-6 bg-brand" : "w-1.5 bg-brand/20"
                 }`}
                 aria-label={`Testimonial ${index + 1}`}
               />

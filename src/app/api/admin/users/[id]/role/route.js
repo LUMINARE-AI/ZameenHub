@@ -1,0 +1,29 @@
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
+import { handleApiError } from "@/lib/errors";
+import { updateUserRole } from "@/lib/services/adminService";
+
+export async function PUT(request, { params }) {
+  try {
+    const auth = await requireAdmin();
+
+    if (!auth.ok) {
+      return NextResponse.json({ message: auth.message }, { status: auth.status });
+    }
+
+    const { id } = await params;
+    const body = await request.json();
+
+    await connectDB();
+    const result = await updateUserRole({
+      targetUserId: id,
+      nextRole: body.role,
+      actor: auth.user,
+    });
+
+    return NextResponse.json(result);
+  } catch (error) {
+    return handleApiError(error);
+  }
+}

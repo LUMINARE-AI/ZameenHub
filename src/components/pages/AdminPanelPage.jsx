@@ -1,127 +1,62 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import StatusBanner from "@/components/StatusBanner";
-import Button from "@/components/ui/Button";
-import API from "@/lib/api";
-import { formatPrice } from "@/lib/property";
+import { useState } from "react";
+import AdminPendingSection from "@/components/admin/AdminPendingSection";
+import AdminHeroSection from "@/components/admin/AdminHeroSection";
+import AdminFeaturedSection from "@/components/admin/AdminFeaturedSection";
+import AdminTestimonialsSection from "@/components/admin/AdminTestimonialsSection";
+import AdminUsersSection from "@/components/admin/AdminUsersSection";
+
+const tabs = [
+  { id: "pending", label: "Approvals" },
+  { id: "hero", label: "Hero images" },
+  { id: "featured", label: "Featured" },
+  { id: "testimonials", label: "Testimonials" },
+  { id: "users", label: "Users" },
+];
 
 export default function AdminPanelPage() {
-  const [properties, setProperties] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState({ tone: "info", message: "" });
-
-  async function fetchPending() {
-    try {
-      setLoading(true);
-      const response = await API.get("/admin/properties/pending");
-      setProperties(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-      setStatus({
-        tone: "error",
-        message: error.response?.data?.message || "Unable to load pending properties.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    void fetchPending();
-  }, []);
-
-  async function approve(id) {
-    try {
-      await API.put(`/admin/properties/${id}/approve`, {});
-      setStatus({ tone: "success", message: "Property approved successfully." });
-      await fetchPending();
-    } catch (error) {
-      setStatus({
-        tone: "error",
-        message: error.response?.data?.message || "Approval failed.",
-      });
-    }
-  }
-
-  async function deleteProperty(id) {
-    try {
-      await API.delete(`/admin/properties/${id}`);
-      setStatus({ tone: "success", message: "Property deleted successfully." });
-      await fetchPending();
-    } catch (error) {
-      setStatus({
-        tone: "error",
-        message: error.response?.data?.message || "Delete failed.",
-      });
-    }
-  }
+  const [activeTab, setActiveTab] = useState("pending");
 
   return (
     <div className="space-y-6">
-      <section className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.28)]">
+      <section className="rounded-3xl border border-brand/10 bg-white/90 p-6 shadow-sm sm:p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.26em] text-brand">Admin panel</p>
-        <h1 className="mt-3 text-3xl font-semibold text-slate-950">Pending property approvals</h1>
-        <p className="mt-2 text-sm text-slate-500">
-          Review incoming listings before they appear publicly.
+        <h1 className="mt-3 font-display text-3xl font-semibold text-brand-ink">
+          Content &amp; marketplace controls
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm text-brand-muted">
+          Manage hero images, featured listings, testimonials, user roles, and pending property
+          approvals from one place.
         </p>
       </section>
 
-      <StatusBanner tone={status.tone} message={status.message} />
-
-      <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {loading ? (
-          Array.from({ length: 3 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-72 animate-pulse rounded-[32px] border border-white/70 bg-white/90"
-            />
-          ))
-        ) : properties.length === 0 ? (
-          <div className="rounded-[32px] border border-dashed border-slate-300 bg-white/80 px-6 py-12 text-center md:col-span-2 xl:col-span-3">
-            <p className="text-xl font-semibold text-slate-900">No pending properties</p>
-            <p className="mt-2 text-sm text-slate-500">
-              New submissions will show up here for review.
-            </p>
-          </div>
-        ) : (
-          properties.map((property) => (
-            <div
-              key={property._id}
-              className="rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.26)]"
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                isActive
+                  ? "bg-brand text-white shadow-md shadow-brand/20"
+                  : "bg-white text-brand-muted ring-1 ring-brand/10 hover:bg-brand-light hover:text-brand-dark"
+              }`}
             >
-              <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
-                Pending
-              </span>
-              <h2 className="mt-4 text-xl font-semibold text-slate-950">{property.title}</h2>
-              <p className="mt-2 text-xs font-bold uppercase tracking-[0.18em] text-brand">
-                {property.category || "Plots"}
-              </p>
-              <p className="mt-2 text-sm text-slate-500">{property.location}</p>
-              <p className="mt-4 text-2xl font-semibold text-slate-950">
-                {formatPrice(property.price)}
-              </p>
-              <p className="mt-4 text-sm leading-6 text-slate-600">{property.description}</p>
-              <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                Owner: {property.owner?.name || "Unknown"}
-                {property.owner?.phone ? ` • ${property.owner.phone}` : ""}
-              </div>
-              <div className="mt-6 flex gap-3">
-                <Button onClick={() => approve(property._id)}>Approve</Button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (window.confirm("Delete this property?")) {
-                      deleteProperty(property._id);
-                    }
-                  }}
-                  className="rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-100 hover:text-rose-700"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
-        )}
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <section className="rounded-3xl border border-brand/10 bg-brand-mist/40 p-4 sm:p-6">
+        {activeTab === "pending" ? <AdminPendingSection /> : null}
+        {activeTab === "hero" ? <AdminHeroSection /> : null}
+        {activeTab === "featured" ? <AdminFeaturedSection /> : null}
+        {activeTab === "testimonials" ? <AdminTestimonialsSection /> : null}
+        {activeTab === "users" ? <AdminUsersSection /> : null}
       </section>
     </div>
   );
