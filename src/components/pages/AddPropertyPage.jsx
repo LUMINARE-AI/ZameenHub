@@ -210,7 +210,7 @@ export default function AddPropertyPage() {
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">List your plot or property</p>
         <h1 className="font-display mt-1 text-xl font-extrabold text-brand-ink sm:text-2xl">
-          Sell land, plots and commercial spaces on ZameenHub
+          Sell land, plots and commercial spaces on Asli Patta
         </h1>
         <p className="mt-2 text-sm text-brand-muted">
           Complete each step below. Your property will be reviewed and published once approved.
@@ -224,7 +224,7 @@ export default function AddPropertyPage() {
                   step > item.id
                     ? "bg-brand text-white"
                     : step === item.id
-                      ? "bg-brand-accent text-brand-dark"
+                      ? "bg-brand-accent text-white"
                       : "bg-brand-light text-brand-muted"
                 }`}
               >

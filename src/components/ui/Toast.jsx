@@ -4,7 +4,7 @@ export default function Toast({ message, tone = "info", onClose }) {
   if (!message) return null;
 
   const tones = {
-    info: "bg-slate-950 text-white",
+    info: "bg-brand-ink text-white",
     success: "bg-emerald-600 text-white",
     error: "bg-rose-600 text-white",
   };

@@ -20,8 +20,12 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
-  title: "ZameenHub | Real Estate Marketplace",
+  title: "Asli Patta | Real Estate Marketplace",
   description: "Plot-first real estate discovery for land, shops, flats and verified listings.",
+  icons: {
+    icon: "/logo.jpeg",
+    apple: "/logo.jpeg",
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -33,7 +37,7 @@ export default function RootLayout({ children }) {
           suppressHydrationWarning
         >
           <AppProviders>
-            <div className="relative isolate min-h-screen bg-brand-cream">
+            <div className="app-shell relative isolate min-h-screen">
               <Navbar />
               <main className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-3 pb-8 pt-[var(--navbar-offset)] sm:px-4 lg:px-6">
                 {children}

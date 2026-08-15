@@ -1,11 +1,11 @@
-# ZameenHub (Next.js Full Stack)
+# Asli Patta (Next.js Full Stack)
 
 Single Next.js app with **Clerk authentication**, **MongoDB**, and **Cloudinary** image uploads.
 
 ## Project structure
 
 ```
-ZameenHub/
+Asli Patta/
 ├── public/              # Static assets
 ├── src/
 │   ├── app/             # Next.js App Router (pages, API routes, layout)

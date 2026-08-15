@@ -5,15 +5,15 @@ const CONTENT = {
   about: {
     label: "About",
     title: "Plot-first real estate discovery",
-    body: "ZameenHub is a real estate marketplace focused on land, plots, shops and verified spaces. Listings are submitted by sellers and approved before they appear publicly.",
+    body: "Asli Patta is a real estate marketplace focused on land, plots, shops and verified spaces. Listings are submitted by sellers and approved before they appear publicly.",
     hero:
       "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80",
     cta: { label: "Explore Plots", href: "/buy-plots" },
   },
   contact: {
     label: "Contact",
-    title: "Contact ZameenHub",
-    body: "For support, seller onboarding or marketplace questions, email support@zameenhub.com or use the seller contact details available on each property detail page.",
+    title: "Contact Asli Patta",
+    body: "For support, seller onboarding or marketplace questions, email support@aslipatta.com or use the seller contact details available on each property detail page.",
     hero:
       "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=1200&q=80",
     cta: { label: "Browse Listings", href: "/listings" },
@@ -21,7 +21,7 @@ const CONTENT = {
   terms: {
     label: "Terms",
     title: "Marketplace terms",
-    body: "Users are responsible for verifying property ownership, approvals and legal documentation before transactions. ZameenHub provides discovery and seller contact tools.",
+    body: "Users are responsible for verifying property ownership, approvals and legal documentation before transactions. Asli Patta provides discovery and seller contact tools.",
     hero:
       "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
     cta: { label: "Read Privacy", href: "/privacy" },
@@ -47,16 +47,16 @@ export default function InfoPage({ type }) {
           alt=""
           className="h-48 w-full object-cover sm:h-56"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/40 to-brand-dark/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-ink/85 via-brand-ink/40 to-brand-ink/15" />
         <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8">
-          <p className="text-xs font-bold uppercase tracking-[0.26em] text-brand-accent">{content.label}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.26em] text-brand-accent-light">{content.label}</p>
           <h1 className="font-display mt-2 text-3xl font-extrabold text-white sm:text-4xl">
             {content.title}
           </h1>
         </div>
       </section>
 
-      <section className="mx-auto max-w-3xl rounded-3xl border border-white/70 bg-white/90 p-8 shadow-[0_24px_70px_-32px_rgba(15,92,72,0.2)]">
+      <section className="mx-auto max-w-3xl rounded-3xl border border-white/70 bg-white/90 p-8 shadow-[0_24px_70px_-32px_rgba(19,28,43,0.2)]">
         <p className="text-base leading-8 text-brand-muted">{content.body}</p>
 
         {type === "contact" ? (
@@ -64,10 +64,10 @@ export default function InfoPage({ type }) {
             <div className="rounded-2xl bg-brand-light/50 p-4 ring-1 ring-brand/10">
               <p className="text-xs font-bold uppercase tracking-wide text-brand">Email</p>
               <a
-                href="mailto:support@zameenhub.com"
+                href="mailto:support@aslipatta.com"
                 className="mt-2 block text-sm font-semibold text-brand-dark hover:text-brand"
               >
-                support@zameenhub.com
+                support@aslipatta.com
               </a>
             </div>
             <div className="rounded-2xl bg-brand-light/50 p-4 ring-1 ring-brand/10">

@@ -200,7 +200,7 @@ export default function ListingsPage({ defaultCategory = "" }) {
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
-            className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-brand-ink/40 backdrop-blur-sm"
             onClick={() => setFilterOpen(false)}
             aria-label="Close filters"
           />

@@ -1,7 +1,7 @@
 import { SignIn } from "@clerk/nextjs";
 
 export const metadata = {
-  title: "Sign In | ZameenHub",
+  title: "Sign In | Asli Patta",
 };
 
 export default function SignInPage() {

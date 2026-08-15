@@ -10,10 +10,10 @@ export default function Button({
       "bg-brand text-white shadow-lg shadow-brand/20 hover:bg-brand-dark",
     secondary:
       "bg-white/90 text-brand-ink shadow-lg shadow-slate-200/70 ring-1 ring-brand-light hover:bg-brand-light",
-    ghost: "bg-slate-100 text-slate-700 hover:bg-brand-light hover:text-brand-dark",
-    dark: "bg-brand-dark text-white hover:bg-brand-ink",
+    ghost: "bg-brand-mist text-brand-dark hover:bg-brand-light hover:text-brand-dark",
+    dark: "bg-brand-ink text-white hover:bg-brand-dark",
     accent:
-      "bg-brand-accent text-brand-dark shadow-lg shadow-brand-accent/25 hover:bg-brand-accent-dark",
+      "bg-brand-accent text-white shadow-lg shadow-brand-accent/25 hover:bg-brand-accent-dark",
   };
 
   return (

@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { LayoutGrid, Menu, PenLine, X } from "lucide-react";
+import { Menu, PenLine, X } from "lucide-react";
 import useDbUser from "@/hooks/useDbUser";
 import { useAuthUI } from "@/context/AuthUIContext";
+import BrandLogo from "@/components/BrandLogo";
 import UserIconButton from "@/components/UserIconButton";
 
-function NavLink({ href, children, onClick }) {
+function NavLink({ href, children, onClick, className = "" }) {
   const pathname = usePathname();
   const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
 
@@ -17,9 +18,9 @@ function NavLink({ href, children, onClick }) {
     <Link
       href={href}
       onClick={onClick}
-      className={`navbar-nav-link nav-link-active relative rounded-lg px-3.5 py-2 text-sm font-semibold tracking-wide !text-white transition duration-300 ${
-        isActive ? "is-active font-bold" : "text-white/90 hover:bg-white/10"
-      }`}
+      className={`navbar-nav-link relative text-sm tracking-wide transition duration-300 ${
+        isActive ? "is-active font-semibold" : "font-medium"
+      } ${className}`}
     >
       {children}
     </Link>
@@ -85,27 +86,28 @@ export default function Navbar() {
         >
           <Link
             href="/"
+            aria-label="Asli Patta home"
             className="group flex min-w-0 shrink-0 items-center gap-2.5"
             onClick={() => setOpen(false)}
           >
             <div className="relative flex items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-accent/15 ring-1 ring-brand-accent/40 transition duration-300 group-hover:bg-brand-accent/25 group-hover:ring-brand-accent/60">
-                <LayoutGrid className="h-5 w-5 text-brand-accent" strokeWidth={2.5} />
+              <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white shadow-md shadow-brand/10 ring-1 ring-brand/15 transition duration-300 group-hover:shadow-lg group-hover:shadow-brand/20 sm:h-12 sm:w-12">
+                <BrandLogo className="h-full w-full" alt="" />
               </div>
               <div className="min-w-0 leading-none">
-                <span className="font-display block truncate text-[15px] font-bold tracking-[0.14em] text-white sm:text-base">
-                  ZAMEENHUB
+                <span className="font-display block truncate text-[15px] font-bold tracking-[0.14em] text-brand-ink sm:text-base">
+                  ASLI PATTA
                 </span>
-                <span className="mt-0.5 hidden text-[10px] font-semibold uppercase tracking-[0.22em] text-brand-accent sm:block">
+                <span className="mt-0.5 hidden text-[10px] font-semibold uppercase tracking-[0.22em] text-brand sm:block">
                   Premium Realty
                 </span>
               </div>
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-0.5 rounded-full border border-white/10 bg-white/5 px-1.5 py-1 text-white backdrop-blur-sm lg:flex">
+          <nav className="hidden items-center gap-7 lg:flex">
             {navItems.map((item) => (
-              <NavLink key={item.label} href={item.to}>
+              <NavLink key={item.label} href={item.to} className="nav-link-active px-1 py-2">
                 {item.label}
               </NavLink>
             ))}
@@ -113,7 +115,7 @@ export default function Navbar() {
 
           <div className="hidden items-center gap-2.5 lg:flex">
             <Link href="/add">
-              <span className="inline-flex min-h-10 items-center gap-2 rounded-full bg-brand-accent px-4 py-2 text-sm font-bold text-brand-dark shadow-lg shadow-brand-accent/30 transition duration-300 hover:-translate-y-0.5 hover:bg-brand-accent-dark hover:shadow-xl hover:shadow-brand-accent/35">
+              <span className="inline-flex min-h-10 items-center gap-2 rounded-full bg-gradient-to-r from-brand to-brand-dark px-4 py-2 text-sm font-bold text-white shadow-lg shadow-brand/25 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand/35">
                 <PenLine className="h-4 w-4" strokeWidth={2.5} />
                 Add Property
               </span>
@@ -135,7 +137,7 @@ export default function Navbar() {
 
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition duration-300 hover:border-brand-accent/50 hover:bg-white/20"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand/15 bg-white/80 text-brand-ink shadow-sm transition duration-300 hover:border-brand/35 hover:bg-brand-light"
               onClick={() => setOpen((current) => !current)}
               aria-label="Toggle menu"
               aria-expanded={open}
@@ -150,28 +152,33 @@ export default function Navbar() {
         <div className="fixed inset-0 z-40 lg:hidden">
           <button
             type="button"
-            className="absolute inset-0 bg-brand-dark/60 backdrop-blur-md"
+            className="absolute inset-0 bg-brand-ink/25 backdrop-blur-md"
             onClick={() => setOpen(false)}
             aria-label="Close menu"
           />
 
-          <div className="absolute inset-x-3 top-[calc(var(--navbar-offset)+0.75rem)] overflow-hidden rounded-2xl border border-white/12 bg-gradient-to-b from-brand-dark to-brand shadow-2xl shadow-brand-dark/40">
-            <div className="border-b border-white/10 px-4 py-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-brand-accent">Menu</p>
-              <p className="mt-1 font-display text-lg font-semibold text-white">Explore ZameenHub</p>
+          <div className="absolute inset-x-3 top-[calc(var(--navbar-offset)+0.75rem)] overflow-hidden rounded-2xl border border-brand/12 bg-white shadow-2xl shadow-brand-ink/15">
+            <div className="accent-panel border-b border-brand/10 px-4 py-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-brand">Menu</p>
+              <p className="mt-1 font-display text-lg font-semibold text-brand-ink">Explore Asli Patta</p>
             </div>
 
-            <nav className="grid gap-0.5 p-3 text-white">
+            <nav className="grid gap-0.5 p-3">
               {navItems.map((item) => (
-                <NavLink key={item.label} href={item.to} onClick={() => setOpen(false)}>
+                <NavLink
+                  key={item.label}
+                  href={item.to}
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl px-3 py-3 hover:bg-brand-light/70"
+                >
                   {item.label}
                 </NavLink>
               ))}
             </nav>
 
-            <div className="grid gap-2 border-t border-white/10 p-3">
+            <div className="grid gap-2 border-t border-brand/10 p-3">
               <Link href="/add" onClick={() => setOpen(false)}>
-                <span className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-brand-accent text-sm font-bold text-brand-dark shadow-md shadow-brand-accent/25">
+                <span className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-dark text-sm font-bold text-white shadow-md shadow-brand/25">
                   <PenLine className="h-4 w-4" strokeWidth={2.5} />
                   Add Property
                 </span>

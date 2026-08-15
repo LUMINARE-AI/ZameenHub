@@ -28,7 +28,7 @@ export default function AccountMenu({ open, onClose }) {
     <div className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-4">
       <button
         type="button"
-        className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
+        className="absolute inset-0 bg-brand-ink/40 backdrop-blur-sm"
         onClick={onClose}
         aria-label="Close account menu"
       />
@@ -45,10 +45,10 @@ export default function AccountMenu({ open, onClose }) {
               <img
                 src={avatarUrl}
                 alt={displayName}
-                className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-brand-accent/50"
+                className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-brand/30"
               />
             ) : (
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-accent text-sm font-bold text-brand-dark">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-sm font-bold text-white">
                 {displayName.charAt(0).toUpperCase()}
               </span>
             )}

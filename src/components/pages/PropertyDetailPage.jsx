@@ -172,7 +172,7 @@ export default function PropertyDetailPage() {
 
   if (!property) {
     return (
-      <div className="rounded-3xl border border-white/70 bg-white/90 px-6 py-14 text-center shadow-[0_24px_70px_-32px_rgba(15,92,72,0.2)]">
+      <div className="rounded-3xl border border-white/70 bg-white/90 px-6 py-14 text-center shadow-[0_24px_70px_-32px_rgba(19,28,43,0.2)]">
         <p className="font-display text-2xl font-semibold text-brand-ink">Property not found</p>
         <p className="mt-2 text-sm text-brand-muted">
           The listing may have moved, or the link may be outdated.
@@ -264,7 +264,7 @@ export default function PropertyDetailPage() {
     <>
       <div className="grid gap-6 pb-24 lg:grid-cols-[minmax(0,1fr)_380px] lg:pb-0">
         <div className="space-y-6">
-          <section className="overflow-hidden rounded-3xl border border-white/70 bg-white/80 p-4 shadow-[0_24px_70px_-32px_rgba(15,92,72,0.2)]">
+          <section className="overflow-hidden rounded-3xl border border-white/70 bg-white/80 p-4 shadow-[0_24px_70px_-32px_rgba(19,28,43,0.2)]">
             <div className="relative overflow-hidden rounded-2xl">
               <button type="button" onClick={() => setLightboxOpen(true)} className="block w-full">
                 <img
@@ -273,9 +273,9 @@ export default function PropertyDetailPage() {
                   className="h-[280px] w-full object-cover sm:h-[380px] lg:h-[460px]"
                 />
               </button>
-              <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 bg-gradient-to-t from-brand-dark/90 via-transparent to-transparent px-4 py-4 text-white sm:flex-row sm:items-end sm:justify-between sm:px-6 sm:py-5">
+              <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 bg-gradient-to-t from-brand-ink/85 via-transparent to-transparent px-4 py-4 text-white sm:flex-row sm:items-end sm:justify-between sm:px-6 sm:py-5">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.24em] text-brand-accent">{property.category}</p>
+                  <p className="text-sm uppercase tracking-[0.24em] text-brand-accent-light">{property.category}</p>
                   <p className="font-display text-2xl font-bold">{formatPrice(property.price)}</p>
                   <p className="text-sm text-white/80">{property.location}</p>
                 </div>
@@ -329,7 +329,7 @@ export default function PropertyDetailPage() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,92,72,0.18)] sm:p-7">
+          <section className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(19,28,43,0.18)] sm:p-7">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.26em] text-brand">
@@ -438,7 +438,7 @@ export default function PropertyDetailPage() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(15,92,72,0.18)] lg:hidden">
+          <section className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_-32px_rgba(19,28,43,0.18)] lg:hidden">
             <p className="text-sm font-semibold uppercase tracking-[0.26em] text-brand">Rate this property</p>
             <h2 className="font-display mt-2 text-xl font-semibold text-brand-ink">Reviews & ratings</h2>
             <div className="mt-5">
@@ -472,7 +472,7 @@ export default function PropertyDetailPage() {
         </div>
 
         <aside className="hidden lg:block">
-          <div className="sticky top-[calc(var(--navbar-offset)+1rem)] space-y-0 overflow-hidden rounded-3xl border border-white/70 bg-white/90 shadow-[0_24px_70px_-32px_rgba(15,92,72,0.18)]">
+          <div className="sticky top-[calc(var(--navbar-offset)+1rem)] space-y-0 overflow-hidden rounded-3xl border border-white/70 bg-white/90 shadow-[0_24px_70px_-32px_rgba(19,28,43,0.18)]">
             <div className="p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.26em] text-brand">Seller contact</p>
               <h2 className="font-display mt-3 text-2xl font-semibold text-brand-ink">Contact Seller</h2>
@@ -539,7 +539,7 @@ export default function PropertyDetailPage() {
         </aside>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-brand/10 bg-white/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(15,92,72,0.1)] backdrop-blur-xl lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-brand/10 bg-white/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(19,28,43,0.1)] backdrop-blur-xl lg:hidden">
         <Button className="flex-1" onClick={() => setShowSeller(true)}>
           Contact Seller
         </Button>

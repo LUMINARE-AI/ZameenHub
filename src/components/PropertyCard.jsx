@@ -61,7 +61,7 @@ export default function PropertyCard({
             isList ? "h-44 sm:h-full sm:min-h-[160px]" : "aspect-[4/3]"
           }`}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/50 via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-ink/45 via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-2">
           <span
             className={`max-w-[70%] truncate rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ring-1 ${getCategoryTone(property.category)}`}
@@ -91,7 +91,7 @@ export default function PropertyCard({
           href={`/property/${property._id}`}
           className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100"
         >
-          <span className="rounded-full bg-brand-accent px-4 py-2 text-xs font-bold text-brand-dark shadow-lg">
+          <span className="rounded-full bg-brand-accent px-4 py-2 text-xs font-bold text-white shadow-lg">
             View Details
           </span>
         </Link>

@@ -27,7 +27,7 @@ export default function AuthModal({ open, tab, onTabChange, onClose }) {
     <div className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-4">
       <button
         type="button"
-        className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
+        className="absolute inset-0 bg-brand-ink/40 backdrop-blur-sm"
         onClick={onClose}
         aria-label="Close sign in"
       />
@@ -46,7 +46,7 @@ export default function AuthModal({ open, tab, onTabChange, onClose }) {
             <p className="mt-1 text-sm text-brand-muted">
               {tab === "sign-in"
                 ? "Sign in to manage your listings"
-                : "Join ZameenHub to post and track properties"}
+                : "Join Asli Patta to post and track properties"}
             </p>
           </div>
           <button

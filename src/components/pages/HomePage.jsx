@@ -23,20 +23,17 @@ import useProperties from "@/hooks/useProperties";
 
 const heroSlides = [
   {
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1920&q=85",
+    image: "/property1.jpeg",
     title: "Find plots, land and shops faster",
     description: "Verified listings with clear pricing, location and seller contact.",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1920&q=85",
+    image: "/property2.jpeg",
     title: "Compare compact property options",
     description: "Browse high-value properties without noisy cards or wasted space.",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1920&q=85",
+    image: "/property3.jpeg",
     title: "Post property with buyer-ready details",
     description: "List plots, shops and flats with quick approval workflows.",
   },
@@ -56,7 +53,7 @@ const faqItems = [
   {
     question: "Is this platform verified?",
     answer:
-      "ZameenHub reviews each listing before approval, and verified listings include seller details and property ratings.",
+      "Asli Patta reviews each listing before approval, and verified listings include seller details and property ratings.",
   },
 ];
 
@@ -215,7 +212,7 @@ export default function HomePage() {
   return (
     <div className="-mt-[var(--navbar-offset)] space-y-8 sm:space-y-10 lg:space-y-12">
       <section
-        className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden bg-brand-dark"
+        className="full-bleed relative overflow-hidden bg-brand-ink"
         onTouchStart={(event) => setTouchStart(event.touches[0].clientX)}
         onTouchEnd={handleTouchEnd}
       >
@@ -237,14 +234,15 @@ export default function HomePage() {
 
           <div className="relative z-10 mx-auto flex min-h-[580px] max-w-[1440px] flex-col justify-end px-4 pb-10 pt-[5.5rem] sm:min-h-[620px] sm:justify-center sm:px-6 sm:pb-12 lg:min-h-[680px] lg:px-10 lg:pb-16">
             <div className="w-full max-w-3xl px-1 py-4 sm:px-2 sm:py-5">
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-accent sm:text-xs">
-                One platform. Every plot solution
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-accent-light sm:text-xs">
+                Asli Property. Verified Details.
               </p>
               <h1 className="font-display mt-3 max-w-2xl text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Buy, Sell &amp; Discover Plots
+                Your Search for the Asli Property Starts Here.
               </h1>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
-                {heroSlides[activeSlide].description}
+                Find verified plots with clear ownership, documentation, location and seller
+                details—helping you make informed property decisions.
               </p>
             </div>
 
@@ -290,7 +288,7 @@ export default function HomePage() {
 
                 <button
                   type="submit"
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-brand-accent px-5 text-sm font-bold text-brand-dark shadow-md shadow-brand-accent/25 transition duration-200 hover:scale-[1.02] hover:bg-brand-accent-dark hover:shadow-lg md:w-12 md:px-0"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-brand-accent px-5 text-sm font-bold text-white shadow-md shadow-brand-accent/25 transition duration-200 hover:scale-[1.02] hover:bg-brand-accent-dark hover:shadow-lg md:w-12 md:px-0"
                   aria-label="Search properties"
                 >
                   <Search className="h-5 w-5" strokeWidth={2.5} />
@@ -322,7 +320,7 @@ export default function HomePage() {
                   onClick={() => setActiveSlide(index)}
                   className={`rounded-full transition-all duration-300 ${
                     index === activeSlide
-                      ? "h-2 w-10 bg-brand-accent shadow-sm shadow-black/20"
+                      ? "h-2 w-10 bg-brand-accent-light shadow-sm shadow-black/20"
                       : "h-2 w-2 bg-white/50 hover:bg-white/70"
                   }`}
                   aria-label={`Show slide ${index + 1}`}
@@ -333,12 +331,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="reveal-section rounded-2xl border border-brand/10 bg-brand-dark px-4 py-6 text-white sm:px-6">
+      <section className="reveal-section soft-panel rounded-2xl border border-brand/12 px-4 py-6 sm:px-6">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {trustStats.map((stat) => (
             <div key={stat.label} className="text-center">
-              <p className="font-display text-2xl font-bold text-brand-accent sm:text-3xl">{stat.value}</p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-white/70">{stat.label}</p>
+              <p className="font-display bg-gradient-to-r from-brand to-brand-dark bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
+                {stat.value}
+              </p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-brand-muted">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -367,9 +367,9 @@ export default function HomePage() {
                   className="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-110"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-ink/85 via-brand-ink/25 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 p-3 text-white">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-accent/90 text-brand-dark">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/90 text-brand">
                     <Icon className="h-4 w-4" strokeWidth={2.5} />
                   </span>
                   <span className="text-sm font-bold">{tile.title}</span>
@@ -521,9 +521,9 @@ export default function HomePage() {
           </div>
 
           <div className="mt-4 grid gap-3 xl:grid-cols-[1fr_260px]">
-            <div className="rounded-xl bg-brand-dark p-4 text-white">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accent">
-                Why choose ZameenHub
+            <div className="accent-panel rounded-xl border border-brand/12 p-4">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">
+                Why choose Asli Patta
               </p>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {[
@@ -536,9 +536,9 @@ export default function HomePage() {
                   return (
                     <div
                       key={item.label}
-                      className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-xs font-bold"
+                      className="flex items-center gap-2 rounded-lg bg-white/80 px-3 py-2 text-xs font-bold text-brand-ink ring-1 ring-brand/10"
                     >
-                      <Icon className="h-4 w-4 text-brand-accent" strokeWidth={2.5} />
+                      <Icon className="h-4 w-4 text-brand" strokeWidth={2.5} />
                       {item.label}
                     </div>
                   );
@@ -571,18 +571,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="reveal-section rounded-2xl border border-brand/15 bg-gradient-to-r from-brand to-brand-dark p-5 text-white sm:p-6">
+      <section className="reveal-section accent-panel rounded-2xl border border-brand/15 p-5 sm:p-6">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accent">Stay updated</p>
-            <h2 className="font-display mt-1 text-lg font-extrabold sm:text-xl">Get plot alerts on WhatsApp</h2>
-            <p className="mt-1 text-sm text-white/75">New listings in your city, delivered instantly.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">Stay updated</p>
+            <h2 className="font-display mt-1 text-lg font-extrabold text-brand-ink sm:text-xl">
+              Get plot alerts on WhatsApp
+            </h2>
+            <p className="mt-1 text-sm text-brand-muted">New listings in your city, delivered instantly.</p>
           </div>
           <a
-            href="https://wa.me/"
+            href="https://wa.me/919214982277"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-accent px-5 text-sm font-bold text-brand-dark shadow-lg transition hover:bg-brand-accent-dark"
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-dark px-5 text-sm font-bold text-white shadow-lg shadow-brand/25 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand/30"
           >
             <MessageCircle className="h-4 w-4" strokeWidth={2.5} />
             Connect on WhatsApp

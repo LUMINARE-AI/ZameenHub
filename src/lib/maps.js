@@ -73,7 +73,7 @@ export async function geocodeAddress(address) {
   const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ZameenHub/1.0",
+      "User-Agent": "AsliPatta/1.0",
     },
   });
 
