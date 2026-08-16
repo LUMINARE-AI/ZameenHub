@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from "react";
 import API from "@/lib/api";
-import {
-  DEFAULT_HERO_SLIDES,
-  DEFAULT_TESTIMONIALS,
-} from "@/lib/homeContentDefaults";
+import { DEFAULT_HERO_SLIDES } from "@/lib/homeContentDefaults";
 
 function mapHeroSlides(slides) {
   const source = Array.isArray(slides) && slides.length ? slides : DEFAULT_HERO_SLIDES;
@@ -22,10 +19,10 @@ function mapHeroSlides(slides) {
 }
 
 function mapTestimonials(items) {
-  const source = Array.isArray(items) && items.length ? items : DEFAULT_TESTIMONIALS;
+  const source = Array.isArray(items) ? items : [];
 
   return source.map((item, index) => ({
-    _id: item._id || `default-${index}`,
+    _id: item._id || `testimonial-${index}`,
     name: item.name,
     role: item.role,
     quote: item.quote,
@@ -35,7 +32,7 @@ function mapTestimonials(items) {
 
 export default function useHomeContent() {
   const [heroSlides, setHeroSlides] = useState(() => mapHeroSlides(DEFAULT_HERO_SLIDES));
-  const [testimonials, setTestimonials] = useState(() => mapTestimonials(DEFAULT_TESTIMONIALS));
+  const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -58,7 +55,7 @@ export default function useHomeContent() {
       } catch (err) {
         if (active) {
           setHeroSlides(mapHeroSlides(DEFAULT_HERO_SLIDES));
-          setTestimonials(mapTestimonials(DEFAULT_TESTIMONIALS));
+          setTestimonials([]);
           setError(err.response?.data?.message || "Unable to load homepage content.");
         }
       } finally {

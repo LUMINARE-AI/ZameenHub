@@ -417,46 +417,48 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="reveal-section rounded-2xl border border-brand/10 bg-brand-light/50 p-4 sm:p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">Testimonials</p>
-        <h2 className="font-display mt-1 text-lg font-extrabold text-brand-ink sm:text-xl">
-          What buyers &amp; sellers say
-        </h2>
-        <div className="relative mt-4 overflow-hidden rounded-2xl border border-brand/10 bg-white p-5 shadow-sm">
-          {testimonials.map((item, index) => (
-            <div
-              key={item._id || item.name}
-              className={`transition-all duration-500 ${
-                index === safeTestimonial
-                  ? "relative opacity-100"
-                  : "pointer-events-none absolute inset-0 p-5 opacity-0"
-              }`}
-            >
-              <div className="flex gap-1 text-brand-accent">
-                {Array.from({ length: item.rating }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-current" strokeWidth={0} />
-                ))}
-              </div>
-              <p className="mt-3 text-sm leading-7 text-brand-muted sm:text-base">&ldquo;{item.quote}&rdquo;</p>
-              <p className="mt-4 text-sm font-bold text-brand-ink">{item.name}</p>
-              <p className="text-xs text-brand-muted">{item.role}</p>
-            </div>
-          ))}
-          <div className="mt-4 flex gap-2">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => setActiveTestimonial(index)}
-                className={`h-1.5 rounded-full transition-all ${
-                  index === safeTestimonial ? "w-6 bg-brand" : "w-1.5 bg-brand/20"
+      {testimonials.length ? (
+        <section className="reveal-section rounded-2xl border border-brand/10 bg-brand-light/50 p-4 sm:p-6">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">Testimonials</p>
+          <h2 className="font-display mt-1 text-lg font-extrabold text-brand-ink sm:text-xl">
+            What buyers &amp; sellers say
+          </h2>
+          <div className="relative mt-4 overflow-hidden rounded-2xl border border-brand/10 bg-white p-5 shadow-sm">
+            {testimonials.map((item, index) => (
+              <div
+                key={item._id || item.name}
+                className={`transition-all duration-500 ${
+                  index === safeTestimonial
+                    ? "relative opacity-100"
+                    : "pointer-events-none absolute inset-0 p-5 opacity-0"
                 }`}
-                aria-label={`Testimonial ${index + 1}`}
-              />
+              >
+                <div className="flex gap-1 text-brand-accent">
+                  {Array.from({ length: item.rating }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-current" strokeWidth={0} />
+                  ))}
+                </div>
+                <p className="mt-3 text-sm leading-7 text-brand-muted sm:text-base">&ldquo;{item.quote}&rdquo;</p>
+                <p className="mt-4 text-sm font-bold text-brand-ink">{item.name}</p>
+                <p className="text-xs text-brand-muted">{item.role}</p>
+              </div>
             ))}
+            <div className="mt-4 flex gap-2">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => setActiveTestimonial(index)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    index === safeTestimonial ? "w-6 bg-brand" : "w-1.5 bg-brand/20"
+                  }`}
+                  aria-label={`Testimonial ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <section className="reveal-section grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">

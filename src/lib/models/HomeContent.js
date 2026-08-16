@@ -39,6 +39,11 @@ const homeContentSchema = new mongoose.Schema(
       type: [testimonialSchema],
       default: [],
     },
+    // Keeps deleted testimonials deleted: defaults are seeded only once, ever.
+    testimonialsSeeded: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

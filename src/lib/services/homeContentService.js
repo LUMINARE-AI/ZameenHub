@@ -54,27 +54,31 @@ export async function getOrCreateHomeContent() {
   let content = await HomeContent.findOne({ key: "default" });
 
   if (!content) {
-    content = await HomeContent.create({
+    return HomeContent.create({
       key: "default",
       heroSlides: DEFAULT_HERO_SLIDES,
       testimonials: DEFAULT_TESTIMONIALS,
+      testimonialsSeeded: true,
     });
-  } else {
-    let dirty = false;
+  }
 
-    if (!Array.isArray(content.heroSlides) || content.heroSlides.length !== 3) {
-      content.heroSlides = normalizeHeroSlides(content.heroSlides);
-      dirty = true;
-    }
+  let dirty = false;
 
+  if (!Array.isArray(content.heroSlides) || content.heroSlides.length !== 3) {
+    content.heroSlides = normalizeHeroSlides(content.heroSlides);
+    dirty = true;
+  }
+
+  if (!content.testimonialsSeeded) {
     if (!Array.isArray(content.testimonials) || content.testimonials.length === 0) {
       content.testimonials = DEFAULT_TESTIMONIALS;
-      dirty = true;
     }
+    content.testimonialsSeeded = true;
+    dirty = true;
+  }
 
-    if (dirty) {
-      await content.save();
-    }
+  if (dirty) {
+    await content.save();
   }
 
   return content;
