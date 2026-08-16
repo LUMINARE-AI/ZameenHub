@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import API from "@/lib/api";
-import { DEFAULT_HERO_SLIDES } from "@/lib/homeContentDefaults";
+import { DEFAULT_FOOTER_SETTINGS, DEFAULT_HERO_SLIDES } from "@/lib/homeContentDefaults";
 
 function mapHeroSlides(slides) {
   const source = Array.isArray(slides) && slides.length ? slides : DEFAULT_HERO_SLIDES;
@@ -30,9 +30,37 @@ function mapTestimonials(items) {
   }));
 }
 
+function mapFooterSettings(settings) {
+  const source = settings && typeof settings === "object" ? settings : {};
+  const phone = String(source.phone || "").trim();
+  const email = String(source.email || "").trim();
+  const whatsapp = String(source.whatsapp || "").replace(/\D/g, "");
+  const address = String(source.address || "").trim();
+  const instagram = String(source.instagram || "").trim();
+  const facebook = String(source.facebook || "").trim();
+  const twitter = String(source.twitter || "").trim();
+
+  if (!phone && !email && !whatsapp && !address && !instagram && !facebook && !twitter) {
+    return { ...DEFAULT_FOOTER_SETTINGS };
+  }
+
+  return {
+    phone,
+    email,
+    whatsapp,
+    address,
+    instagram,
+    facebook,
+    twitter,
+  };
+}
+
 export default function useHomeContent() {
   const [heroSlides, setHeroSlides] = useState(() => mapHeroSlides(DEFAULT_HERO_SLIDES));
   const [testimonials, setTestimonials] = useState([]);
+  const [footerSettings, setFooterSettings] = useState(() =>
+    mapFooterSettings(DEFAULT_FOOTER_SETTINGS)
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -52,10 +80,12 @@ export default function useHomeContent() {
 
         setHeroSlides(mapHeroSlides(response.data?.heroSlides));
         setTestimonials(mapTestimonials(response.data?.testimonials));
+        setFooterSettings(mapFooterSettings(response.data?.footerSettings));
       } catch (err) {
         if (active) {
           setHeroSlides(mapHeroSlides(DEFAULT_HERO_SLIDES));
           setTestimonials([]);
+          setFooterSettings(mapFooterSettings(DEFAULT_FOOTER_SETTINGS));
           setError(err.response?.data?.message || "Unable to load homepage content.");
         }
       } finally {
@@ -72,5 +102,5 @@ export default function useHomeContent() {
     };
   }, []);
 
-  return { heroSlides, testimonials, loading, error };
+  return { heroSlides, testimonials, footerSettings, loading, error };
 }

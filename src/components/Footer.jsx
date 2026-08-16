@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
+import useHomeContent from "@/hooks/useHomeContent";
+import { DEFAULT_FOOTER_SETTINGS } from "@/lib/homeContentDefaults";
 
 const footerGroups = [
   {
@@ -29,7 +33,124 @@ const footerGroups = [
   },
 ];
 
+const iconButtonClass =
+  "flex h-10 w-10 items-center justify-center rounded-xl bg-white text-brand ring-1 ring-brand/15 transition hover:bg-brand hover:text-white";
+
+function InstagramIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="2" />
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+      <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
+    </svg>
+  );
+}
+
+function FacebookIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M14 9h3V6h-3c-1.7 0-3 1.3-3 3v2H9v3h2v7h3v-7h3l1-3h-4V9c0-.6.4-1 1-1z" />
+    </svg>
+  );
+}
+
+function TwitterIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.5 2.25h7.214l4.261 5.697L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+    </svg>
+  );
+}
+
+function phoneHref(phone) {
+  const digits = String(phone || "").replace(/[^\d+]/g, "");
+  return digits ? `tel:${digits}` : "";
+}
+
+function whatsappHref(whatsapp) {
+  const digits = String(whatsapp || "").replace(/\D/g, "");
+  return digits ? `https://wa.me/${digits}` : "";
+}
+
 export default function Footer() {
+  const { footerSettings } = useHomeContent();
+  const settings = footerSettings || DEFAULT_FOOTER_SETTINGS;
+
+  const socialLinks = [
+    settings.instagram
+      ? {
+          key: "instagram",
+          href: settings.instagram,
+          label: "Instagram",
+          icon: InstagramIcon,
+          external: true,
+        }
+      : null,
+    settings.facebook
+      ? {
+          key: "facebook",
+          href: settings.facebook,
+          label: "Facebook",
+          icon: FacebookIcon,
+          external: true,
+        }
+      : null,
+    settings.twitter
+      ? {
+          key: "twitter",
+          href: settings.twitter,
+          label: "Twitter",
+          icon: TwitterIcon,
+          external: true,
+        }
+      : null,
+    settings.email
+      ? {
+          key: "email",
+          href: `mailto:${settings.email}`,
+          label: "Email us",
+          icon: Mail,
+          external: false,
+        }
+      : null,
+    whatsappHref(settings.whatsapp)
+      ? {
+          key: "whatsapp",
+          href: whatsappHref(settings.whatsapp),
+          label: "WhatsApp",
+          icon: MessageCircle,
+          external: true,
+        }
+      : null,
+  ].filter(Boolean);
+
+  const contactLines = [
+    settings.phone
+      ? {
+          key: "phone",
+          href: phoneHref(settings.phone),
+          label: settings.phone,
+          icon: Phone,
+        }
+      : null,
+    settings.email
+      ? {
+          key: "email",
+          href: `mailto:${settings.email}`,
+          label: settings.email,
+          icon: Mail,
+        }
+      : null,
+    settings.address
+      ? {
+          key: "address",
+          href: "",
+          label: settings.address,
+          icon: MapPin,
+        }
+      : null,
+  ].filter(Boolean);
+
   return (
     <footer className="soft-panel mt-4 border-t border-brand/12 text-brand-ink">
       <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
@@ -44,24 +165,58 @@ export default function Footer() {
               Plot-focused discovery for land, shops, flats and verified seller-led listings across India.
             </p>
 
-            <div className="mt-5 flex items-center gap-3">
-              <a
-                href="mailto:support@aslipatta.com"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-brand ring-1 ring-brand/15 transition hover:bg-brand hover:text-white"
-                aria-label="Email us"
-              >
-                <Mail className="h-4 w-4" strokeWidth={2.5} />
-              </a>
-              <a
-                href="https://wa.me/919214982277"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-brand ring-1 ring-brand/15 transition hover:bg-brand hover:text-white"
-                aria-label="WhatsApp"
-              >
-                <MessageCircle className="h-4 w-4" strokeWidth={2.5} />
-              </a>
-            </div>
+            {contactLines.length > 0 ? (
+              <div className="mt-5 space-y-2.5">
+                {contactLines.map((item) => {
+                  const Icon = item.icon;
+                  const content = (
+                    <>
+                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-brand" strokeWidth={2.5} />
+                      <span className="text-sm leading-5 text-brand-muted">{item.label}</span>
+                    </>
+                  );
+
+                  if (item.href) {
+                    return (
+                      <a
+                        key={item.key}
+                        href={item.href}
+                        className="flex items-start gap-2.5 transition hover:text-brand-dark"
+                      >
+                        {content}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <div key={item.key} className="flex items-start gap-2.5">
+                      {content}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+
+            {socialLinks.length > 0 ? (
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                {socialLinks.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <a
+                      key={item.key}
+                      href={item.href}
+                      className={iconButtonClass}
+                      aria-label={item.label}
+                      {...(item.external
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                    >
+                      <Icon className="h-4 w-4" strokeWidth={2.5} />
+                    </a>
+                  );
+                })}
+              </div>
+            ) : null}
 
             <form
               className="mt-6 rounded-2xl border border-brand/12 bg-white/70 p-4 shadow-sm"

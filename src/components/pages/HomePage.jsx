@@ -211,7 +211,7 @@ export default function HomePage() {
           <div className="relative z-10 mx-auto flex min-h-[580px] max-w-[1440px] flex-col justify-end px-4 pb-10 pt-[var(--navbar-offset)] sm:min-h-[620px] sm:justify-center sm:px-6 sm:pb-12 lg:min-h-[680px] lg:px-10 lg:pb-16">
             <div className="w-full max-w-3xl px-1 py-4 sm:px-2 sm:py-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-accent-light sm:text-xs">
-                Asli Property. Verified Details.
+                Asli Zameen, Asli Jaankari
               </p>
               <h1 className="font-display mt-3 max-w-2xl text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
                 Your Search for the Asli Property Starts Here.
@@ -220,6 +220,14 @@ export default function HomePage() {
                 Find verified plots with clear ownership, documentation, location and seller
                 details—helping you make informed property decisions.
               </p>
+              <ul className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-bold uppercase tracking-[0.18em] text-white/80 sm:text-xs">
+                {["Verified", "Authentic", "Trusted"].map((item) => (
+                  <li key={item} className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-brand-accent-light" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <form

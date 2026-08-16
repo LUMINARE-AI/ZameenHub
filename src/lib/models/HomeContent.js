@@ -22,6 +22,19 @@ const testimonialSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const footerSettingsSchema = new mongoose.Schema(
+  {
+    phone: { type: String, trim: true, default: "", maxlength: 40 },
+    email: { type: String, trim: true, default: "", maxlength: 120 },
+    whatsapp: { type: String, trim: true, default: "", maxlength: 40 },
+    address: { type: String, trim: true, default: "", maxlength: 300 },
+    instagram: { type: String, trim: true, default: "", maxlength: 300 },
+    facebook: { type: String, trim: true, default: "", maxlength: 300 },
+    twitter: { type: String, trim: true, default: "", maxlength: 300 },
+  },
+  { _id: false }
+);
+
 const homeContentSchema = new mongoose.Schema(
   {
     key: {
@@ -43,6 +56,10 @@ const homeContentSchema = new mongoose.Schema(
     testimonialsSeeded: {
       type: Boolean,
       default: false,
+    },
+    footerSettings: {
+      type: footerSettingsSchema,
+      default: () => ({}),
     },
   },
   { timestamps: true }

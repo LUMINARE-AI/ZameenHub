@@ -1,5 +1,6 @@
 import HomeContent from "@/lib/models/HomeContent";
 import {
+  DEFAULT_FOOTER_SETTINGS,
   DEFAULT_HERO_SLIDES,
   DEFAULT_TESTIMONIALS,
 } from "@/lib/homeContentDefaults";
@@ -7,6 +8,63 @@ import { destroyImage, uploadImageWithMeta } from "@/lib/upload";
 
 function text(value) {
   return String(value || "").trim();
+}
+
+function digitsOnly(value) {
+  return text(value).replace(/\D/g, "");
+}
+
+function normalizeUrl(value) {
+  const raw = text(value);
+  if (!raw) {
+    return "";
+  }
+
+  if (/^https?:\/\//i.test(raw)) {
+    return raw;
+  }
+
+  return `https://${raw}`;
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function isValidHttpUrl(value) {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function normalizeFooterSettings(settings = {}) {
+  const source = settings && typeof settings === "object" ? settings : {};
+  const phone = text(source.phone);
+  const email = text(source.email);
+  const whatsapp = digitsOnly(source.whatsapp);
+  const address = text(source.address);
+  const instagram = text(source.instagram);
+  const facebook = text(source.facebook);
+  const twitter = text(source.twitter);
+
+  const hasAny = phone || email || whatsapp || address || instagram || facebook || twitter;
+
+  if (!hasAny) {
+    return { ...DEFAULT_FOOTER_SETTINGS };
+  }
+
+  return {
+    phone,
+    email,
+    whatsapp,
+    address,
+    instagram,
+    facebook,
+    twitter,
+  };
 }
 
 function normalizeHeroSlides(slides = []) {
@@ -46,6 +104,7 @@ function serializeHomeContent(doc) {
   return {
     heroSlides: normalizeHeroSlides(doc.heroSlides),
     testimonials: normalizeTestimonials(doc.testimonials),
+    footerSettings: normalizeFooterSettings(doc.footerSettings),
     updatedAt: doc.updatedAt,
   };
 }
@@ -59,6 +118,7 @@ export async function getOrCreateHomeContent() {
       heroSlides: DEFAULT_HERO_SLIDES,
       testimonials: DEFAULT_TESTIMONIALS,
       testimonialsSeeded: true,
+      footerSettings: DEFAULT_FOOTER_SETTINGS,
     });
   }
 
@@ -74,6 +134,11 @@ export async function getOrCreateHomeContent() {
       content.testimonials = DEFAULT_TESTIMONIALS;
     }
     content.testimonialsSeeded = true;
+    dirty = true;
+  }
+
+  if (!content.footerSettings || typeof content.footerSettings !== "object") {
+    content.footerSettings = DEFAULT_FOOTER_SETTINGS;
     dirty = true;
   }
 
@@ -228,6 +293,88 @@ export async function deleteTestimonial(id) {
   }
 
   testimonial.deleteOne();
+  await content.save();
+
+  return serializeHomeContent(content);
+}
+
+function validateFooterSettingsInput(body = {}) {
+  const payload = {};
+
+  if (body.phone !== undefined) {
+    payload.phone = text(body.phone);
+    if (payload.phone && payload.phone.length > 40) {
+      return { error: "Phone must be 40 characters or fewer" };
+    }
+  }
+
+  if (body.email !== undefined) {
+    payload.email = text(body.email);
+    if (payload.email) {
+      if (payload.email.length > 120 || !isValidEmail(payload.email)) {
+        return { error: "Enter a valid email address" };
+      }
+    }
+  }
+
+  if (body.whatsapp !== undefined) {
+    payload.whatsapp = digitsOnly(body.whatsapp);
+    if (payload.whatsapp && (payload.whatsapp.length < 8 || payload.whatsapp.length > 15)) {
+      return { error: "WhatsApp number must be 8–15 digits (with country code)" };
+    }
+  }
+
+  if (body.address !== undefined) {
+    payload.address = text(body.address);
+    if (payload.address && payload.address.length > 300) {
+      return { error: "Address must be 300 characters or fewer" };
+    }
+  }
+
+  for (const field of ["instagram", "facebook", "twitter"]) {
+    if (body[field] === undefined) {
+      continue;
+    }
+
+    const raw = text(body[field]);
+    if (!raw) {
+      payload[field] = "";
+      continue;
+    }
+
+    const normalized = normalizeUrl(raw);
+    if (!isValidHttpUrl(normalized) || normalized.length > 300) {
+      return { error: `Enter a valid ${field} URL` };
+    }
+    payload[field] = normalized;
+  }
+
+  return { payload };
+}
+
+export async function updateFooterSettings(body) {
+  const { payload, error } = validateFooterSettingsInput(body);
+
+  if (error) {
+    const err = new Error(error);
+    err.status = 400;
+    throw err;
+  }
+
+  const content = await getOrCreateHomeContent();
+  const current = normalizeFooterSettings(content.footerSettings);
+  const next = {
+    ...current,
+    ...payload,
+  };
+
+  if (!next.email && !next.whatsapp) {
+    const err = new Error("Provide at least an email or WhatsApp number");
+    err.status = 400;
+    throw err;
+  }
+
+  content.footerSettings = next;
   await content.save();
 
   return serializeHomeContent(content);

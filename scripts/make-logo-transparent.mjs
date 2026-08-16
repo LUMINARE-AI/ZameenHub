@@ -90,12 +90,45 @@ for (let y = 0; y < height; y += 1) {
   }
 }
 
+// The source artwork carries tagline lines under the wordmark. They live in their own
+// bands separated by empty rows, so cut at the first wide gap in the lower part.
+const GAP_ROWS = 6;
+const GAP_SEARCH_START = 0.6;
+
+const boxTop = minY;
+const boxHeight = maxY - minY + 1;
+let contentHeight = boxHeight;
+let emptyRun = 0;
+
+for (let y = boxTop; y <= maxY; y += 1) {
+  let opaque = false;
+  for (let x = minX; x <= maxX; x += 1) {
+    if (data[(y * width + x) * channels + 3] > 10) {
+      opaque = true;
+      break;
+    }
+  }
+
+  if (opaque) {
+    emptyRun = 0;
+    continue;
+  }
+
+  emptyRun += 1;
+  const runStart = y - emptyRun + 1;
+
+  if (emptyRun >= GAP_ROWS && runStart - boxTop >= boxHeight * GAP_SEARCH_START) {
+    contentHeight = runStart - boxTop;
+    break;
+  }
+}
+
 await sharp(data, { raw: { width, height, channels } })
   .extract({
     left: minX,
     top: minY,
     width: maxX - minX + 1,
-    height: maxY - minY + 1,
+    height: contentHeight,
   })
   .resize({ width: 640, withoutEnlargement: true })
   .png({ compressionLevel: 9, palette: true, quality: 92 })

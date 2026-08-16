@@ -45,3 +45,13 @@ export const DEFAULT_TESTIMONIALS = [
     order: 2,
   },
 ];
+
+export const DEFAULT_FOOTER_SETTINGS = {
+  phone: "",
+  email: "support@aslipatta.com",
+  whatsapp: "919214982277",
+  address: "",
+  instagram: "",
+  facebook: "",
+  twitter: "",
+};

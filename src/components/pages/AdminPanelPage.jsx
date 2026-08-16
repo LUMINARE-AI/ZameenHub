@@ -5,6 +5,7 @@ import AdminPendingSection from "@/components/admin/AdminPendingSection";
 import AdminHeroSection from "@/components/admin/AdminHeroSection";
 import AdminFeaturedSection from "@/components/admin/AdminFeaturedSection";
 import AdminTestimonialsSection from "@/components/admin/AdminTestimonialsSection";
+import AdminFooterSection from "@/components/admin/AdminFooterSection";
 import AdminUsersSection from "@/components/admin/AdminUsersSection";
 
 const tabs = [
@@ -12,6 +13,7 @@ const tabs = [
   { id: "hero", label: "Hero images" },
   { id: "featured", label: "Featured" },
   { id: "testimonials", label: "Testimonials" },
+  { id: "footer", label: "Footer" },
   { id: "users", label: "Users" },
 ];
 
@@ -26,8 +28,8 @@ export default function AdminPanelPage() {
           Content &amp; marketplace controls
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-brand-muted">
-          Manage hero images, featured listings, testimonials, user roles, and pending property
-          approvals from one place.
+          Manage hero images, featured listings, testimonials, footer contact links, user roles, and
+          pending property approvals from one place.
         </p>
       </section>
 
@@ -56,6 +58,7 @@ export default function AdminPanelPage() {
         {activeTab === "hero" ? <AdminHeroSection /> : null}
         {activeTab === "featured" ? <AdminFeaturedSection /> : null}
         {activeTab === "testimonials" ? <AdminTestimonialsSection /> : null}
+        {activeTab === "footer" ? <AdminFooterSection /> : null}
         {activeTab === "users" ? <AdminUsersSection /> : null}
       </section>
     </div>
