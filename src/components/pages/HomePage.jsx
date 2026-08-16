@@ -208,7 +208,7 @@ export default function HomePage() {
 
           <div className="hero-overlay pointer-events-none absolute inset-0" />
 
-          <div className="relative z-10 mx-auto flex min-h-[580px] max-w-[1440px] flex-col justify-end px-4 pb-10 pt-[5.5rem] sm:min-h-[620px] sm:justify-center sm:px-6 sm:pb-12 lg:min-h-[680px] lg:px-10 lg:pb-16">
+          <div className="relative z-10 mx-auto flex min-h-[580px] max-w-[1440px] flex-col justify-end px-4 pb-10 pt-[var(--navbar-offset)] sm:min-h-[620px] sm:justify-center sm:px-6 sm:pb-12 lg:min-h-[680px] lg:px-10 lg:pb-16">
             <div className="w-full max-w-3xl px-1 py-4 sm:px-2 sm:py-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-accent-light sm:text-xs">
                 Asli Property. Verified Details.

@@ -35,14 +35,9 @@ export default function Footer() {
       <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div className="grid gap-8 sm:gap-10 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div className="lg:max-w-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg shadow-brand/10 ring-1 ring-brand/15">
-                <BrandLogo className="h-full w-full" alt="" />
-              </div>
-              <div className="min-w-0">
-                <p className="font-display text-lg font-bold text-brand-ink">Asli Patta</p>
-                <p className="text-sm text-brand-muted">Real Estate Marketplace</p>
-              </div>
+            <div className="min-w-0">
+              <BrandLogo className="h-14 w-auto sm:h-16" alt="Asli Patta" />
+              <p className="mt-2 text-sm text-brand-muted">Real Estate Marketplace</p>
             </div>
 
             <p className="mt-4 max-w-prose text-sm leading-6 text-brand-muted">

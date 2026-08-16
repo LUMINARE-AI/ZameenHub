@@ -37,7 +37,6 @@ export default function Navbar() {
   const { handleUserIconClick } = useAuthUI();
 
   const isHome = pathname === "/";
-  const isHeroHeader = isHome && !scrolled;
 
   const navItems = [
     { label: "Home", to: "/" },
@@ -75,9 +74,9 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-out ${
-          isHeroHeader ? "navbar-hero" : "navbar-solid"
-        } ${scrolled && isHome ? "py-0" : ""}`}
+        className={`navbar-solid fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-out ${
+          scrolled && isHome ? "py-0" : ""
+        }`}
       >
         <div
           className={`mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 transition-all duration-500 sm:px-6 ${
@@ -87,22 +86,15 @@ export default function Navbar() {
           <Link
             href="/"
             aria-label="Asli Patta home"
-            className="group flex min-w-0 shrink-0 items-center gap-2.5"
+            className="group flex min-w-0 shrink-0 items-center"
             onClick={() => setOpen(false)}
           >
-            <div className="relative flex items-center gap-2.5">
-              <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white shadow-md shadow-brand/10 ring-1 ring-brand/15 transition duration-300 group-hover:shadow-lg group-hover:shadow-brand/20 sm:h-12 sm:w-12">
-                <BrandLogo className="h-full w-full" alt="" />
-              </div>
-              <div className="min-w-0 leading-none">
-                <span className="font-display block truncate text-[15px] font-bold tracking-[0.14em] text-brand-ink sm:text-base">
-                  ASLI PATTA
-                </span>
-                <span className="mt-0.5 hidden text-[10px] font-semibold uppercase tracking-[0.22em] text-brand sm:block">
-                  Premium Realty
-                </span>
-              </div>
-            </div>
+            <BrandLogo
+              alt=""
+              className={`w-auto transition-all duration-500 ease-out group-hover:scale-[1.03] ${
+                scrolled ? "h-12 sm:h-14" : "h-14 sm:h-16"
+              }`}
+            />
           </Link>
 
           <nav className="hidden items-center gap-7 lg:flex">

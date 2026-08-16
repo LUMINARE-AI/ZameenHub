@@ -29,7 +29,7 @@
   --brand-accent-light: #dfb086;
   --brand-cream: #f7f9fc;
   --brand-muted: #5d6a80;
-  --navbar-offset: 5.5rem;
+  --navbar-offset: 6rem;
 }
 
 html {
@@ -109,30 +109,10 @@ body {
     linear-gradient(90deg, rgba(19, 28, 43, 0.52) 0%, rgba(19, 28, 43, 0) 62%);
 }
 
-.navbar-hero {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.82) 0%,
-    rgba(247, 249, 252, 0.66) 100%
-  );
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border-bottom: 1px solid rgba(30, 58, 95, 0.12);
-  box-shadow: 0 10px 30px rgba(19, 28, 43, 0.08);
-}
-
 .navbar-solid {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.96) 0%,
-    rgba(242, 245, 250, 0.94) 100%
-  );
-  backdrop-filter: blur(26px) saturate(170%);
-  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  background: #ffffff;
   border-bottom: 1px solid rgba(30, 58, 95, 0.14);
-  box-shadow:
-    0 8px 28px rgba(19, 28, 43, 0.09),
-    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  box-shadow: 0 8px 28px rgba(19, 28, 43, 0.09);
 }
 
 .navbar-solid::after {

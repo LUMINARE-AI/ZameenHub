@@ -1,7 +1,7 @@
-export default function BrandLogo({ className = "h-11 w-11", alt = "Asli Patta" }) {
+export default function BrandLogo({ className = "h-11 w-auto", alt = "Asli Patta" }) {
   return (
     <img
-      src="/logo.jpeg"
+      src="/logo.png"
       alt={alt}
       className={`object-contain ${className}`}
     />
